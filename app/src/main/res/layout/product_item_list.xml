@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="5dp"
+    android:background="@drawable/product_item_list_bg"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/iv_product_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/ic_launcher_background"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="Product Image" />
+
+    <TextView
+        android:id="@+id/tv_product_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/dosis"
+        android:text="Product Name"
+        android:textColor="@color/btn_login"
+        android:layout_marginHorizontal="16dp"
+        android:textFontWeight="800"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/iv_product_image"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/dosis"
+        android:text="Product Price"
+        android:textColor="@color/btn_login_disabled"
+        android:textFontWeight="800"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintStart_toEndOf="@+id/iv_product_image"
+        app:layout_constraintTop_toBottomOf="@id/tv_product_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" - "
+        android:textColor="@color/btn_login_disabled"
+        android:textFontWeight="800"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_product_quantity"
+        app:layout_constraintStart_toEndOf="@+id/tv_product_price" />
+
+    <TextView
+        android:id="@+id/tv_product_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_product_name"
+        android:layout_toEndOf="@+id/tv_product_price"
+        android:fontFamily="@font/dosis"
+        android:text="Product Quality"
+        android:layout_marginHorizontal="16dp"
+        android:textColor="@color/btn_login_disabled"
+        android:textFontWeight="800"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_product_price"
+        app:layout_constraintTop_toBottomOf="@+id/tv_product_name" />
+
+    <ImageButton
+        android:id="@+id/btn_edit_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/baseline_edit_48"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_product"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="Edit Product" />
+
+    <ImageButton
+        android:id="@+id/btn_delete_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/baseline_clear_48"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="Delete Product" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

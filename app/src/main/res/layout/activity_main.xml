@@ -31,7 +31,6 @@
             android:layout_gravity="start"
             android:layout_marginStart="10dp"
             android:textSize="22sp"
-            android:fontFamily="@font/dosis"
             android:textFontWeight="800"
             android:background="@android:color/transparent"
             android:textColor="@android:color/white"

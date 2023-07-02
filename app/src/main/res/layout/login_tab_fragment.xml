@@ -26,8 +26,6 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:inputType="textEmailAddress"
-            android:fontFamily="@font/dosis"
-            android:textFontWeight="600"
             android:textCursorDrawable="@color/gray"
             />
     </com.google.android.material.textfield.TextInputLayout>
@@ -54,8 +52,6 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:inputType="textPassword"
-        android:fontFamily="@font/dosis"
-        android:textFontWeight="600"
         android:textCursorDrawable="@color/gray"
          />
     </com.google.android.material.textfield.TextInputLayout>
@@ -70,8 +66,6 @@
         android:layout_height="wrap_content"
         android:text="Remember Me"
         android:textSize="16sp"
-        android:fontFamily="@font/dosis"
-        android:textFontWeight="600"
         android:layout_marginHorizontal="16dp"
         android:textColor="@color/gray"
         android:id="@+id/cbRememberMe"
@@ -84,8 +78,6 @@
             android:layout_height="wrap_content"
             android:text="Forgot Password?"
             android:textSize="16sp"
-            android:fontFamily="@font/dosis"
-            android:textFontWeight="600"
             android:layout_marginHorizontal="16dp"
             android:textColor="@color/btn_login"
             />
@@ -109,10 +101,8 @@
             android:layout_marginVertical="8dp"
             android:outlineAmbientShadowColor="@color/gray"
             android:shadowColor="@color/gray_light"
-            android:fontFamily="@font/dosis"
             android:text="Login"
             android:textColor="@color/white"
-            android:textFontWeight="800"
             android:textSize="20sp" />
 
         <com.airbnb.lottie.LottieAnimationView
@@ -127,70 +117,6 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="or login with:"
-        android:textSize="18sp"
-        android:fontFamily="@font/dosis"
-        android:textFontWeight="600"
-        android:layout_marginHorizontal="16dp"
-        android:textColor="@color/gray"
-        />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/tvFacebook"
-            android:drawableLeft="@drawable/facebook_38"
-            android:drawablePadding="8dp"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Facebook"
-            android:textSize="18sp"
-            android:fontFamily="@font/dosis"
-            android:textFontWeight="600"
-            android:layout_marginHorizontal="16dp"
-            android:textColor="@color/btn_login"
-            />
-
-
-        <TextView
-            android:id="@+id/tvGoogle"
-            android:drawableLeft="@drawable/google_38"
-            android:drawablePadding="8dp"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Google"
-            android:textSize="18sp"
-            android:fontFamily="@font/dosis"
-            android:textFontWeight="600"
-            android:layout_marginHorizontal="16dp"
-            android:textColor="@color/btn_login"
-            />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tvPhoneOTP"
-        android:drawableLeft="@drawable/phone_38"
-        android:drawablePadding="8dp"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="OTP Login"
-        android:textSize="18sp"
-        android:fontFamily="@font/dosis"
-        android:textFontWeight="600"
-        android:textColor="@color/btn_login"
-        />
 
 </LinearLayout>

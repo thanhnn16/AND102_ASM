@@ -1,5 +1,7 @@
 [versions]
 agp = "8.2.0-alpha10"
+compressor = "2.1.0"
+id-compressor = "3.0.1"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
@@ -10,8 +12,11 @@ firebase-auth-ktx = "22.0.0"
 firebase-auth = "22.0.0"
 firebase-database = "20.2.2"
 firebase-firestore = "24.6.1"
+picasso = "2.71828"
 
 [libraries]
+compressor = { module = "id.zelory:compressor", version.ref = "compressor" }
+compressor-v301 = { module = "id.zelory:compressor", version.ref = "id-compressor" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
@@ -22,6 +27,7 @@ firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx",
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebase-auth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebase-database" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebase-firestore" }
+picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

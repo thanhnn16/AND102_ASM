@@ -3,8 +3,4 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string name="facebook_app_id">253239274006316</string>
-    <string name="fb_login_protocol_scheme">fb253239274006316</string>
-    <string name="facebook_client_token">62971289c5ff0fae4f8d8f9a7f705719</string>
 </resources>

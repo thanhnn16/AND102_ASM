@@ -26,8 +26,6 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:inputType="textEmailAddress"
-            android:fontFamily="@font/dosis"
-            android:textFontWeight="600"
             android:textCursorDrawable="@color/gray"
             />
     </com.google.android.material.textfield.TextInputLayout>
@@ -54,8 +52,6 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:inputType="textPassword"
-            android:fontFamily="@font/dosis"
-            android:textFontWeight="600"
             android:textCursorDrawable="@color/gray"
             />
     </com.google.android.material.textfield.TextInputLayout>
@@ -82,8 +78,6 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:inputType="textPassword"
-            android:fontFamily="@font/dosis"
-            android:textFontWeight="600"
             android:textCursorDrawable="@color/gray"
             />
     </com.google.android.material.textfield.TextInputLayout>
@@ -102,10 +96,8 @@
             android:id="@+id/tvSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/dosis"
             android:text="Sign Up"
             android:textSize="20sp"
-            android:textFontWeight="800"
             android:layout_marginVertical="8dp"
             android:textColor="@color/white"
             android:outlineAmbientShadowColor="@color/gray"

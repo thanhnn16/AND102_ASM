@@ -71,6 +71,7 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
                 }
                 else {
                     countDown();
+                    edtCode.requestFocus();
                     edtCode.setError(null);
                     btnVerify.setEnabled(true);
                     edtCode.setEnabled(true);

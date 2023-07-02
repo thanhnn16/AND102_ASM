@@ -1,26 +1,52 @@
 package com.miwth.and102_asm.database;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.fragment.ProductManagementFragment;
 import com.miwth.and102_asm.model.Product;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Objects;
+
 public class AddProductActivity extends AppCompatActivity{
 
-    EditText edtProductID, edtProductName, edtProductPrice, edtProductQuantity, edtImgSrc;
+    EditText edtProductID, edtProductName, edtProductPrice, edtProductQuantity;
     Button btnAddProduct;
     ProductManagementFragment productManagementFragment;
+    ImageView imgProduct;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    Uri imgUri;
+
+    ActivityResultLauncher<Intent> mGetContent = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            Intent data = result.getData();
+            if (data != null) {
+                imgUri = data.getData();
+                imgProduct.setImageURI(imgUri);
+                }
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,35 +57,41 @@ public class AddProductActivity extends AppCompatActivity{
         edtProductName = findViewById(R.id.etProductName);
         edtProductPrice = findViewById(R.id.etProductPrice);
         edtProductQuantity = findViewById(R.id.etProductQuantity);
-        edtImgSrc = findViewById(R.id.etProductImage);
+        imgProduct = findViewById(R.id.imgProduct);
 
         productManagementFragment = new ProductManagementFragment();
-
         btnAddProduct = findViewById(R.id.btnAddProduct);
 
-        btnAddProduct.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String productID = edtProductID.getText().toString();
-                String productName = edtProductName.getText().toString();
-                String productPrice = edtProductPrice.getText().toString();
-                String productQuantity = edtProductQuantity.getText().toString();
-                String productImgSrc = edtImgSrc.getText().toString();
+        imgProduct.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            mGetContent.launch(Intent.createChooser(intent, "Select Picture"));
+        });
+        btnAddProduct.setOnClickListener(v -> {
+            String productID = edtProductID.getText().toString();
+            String productName = edtProductName.getText().toString();
+            String productPrice = edtProductPrice.getText().toString();
+            String productQuantity = edtProductQuantity.getText().toString();
+            String productImg = "gs://and102-asm.appspot.com/avatar/" + productID;
 
-                if (productID.isEmpty() || productName.isEmpty() || productPrice.isEmpty() || productQuantity.isEmpty() || productImgSrc.isEmpty()) {
-                    Toast.makeText(AddProductActivity.this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-
-
-                Product product = new Product(Integer.valueOf(productID), productName, productPrice, Integer.valueOf(productQuantity), productImgSrc, mAuth.getCurrentUser().getUid());
-
-                Intent intent = new Intent();
+            if (productID.isEmpty() || productName.isEmpty() || productPrice.isEmpty() || productQuantity.isEmpty()) {
+                Toast.makeText(AddProductActivity.this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Product product = new Product(Integer.parseInt(productID), productName,
+                    productPrice, Integer.parseInt(productQuantity), productImg, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+            Intent intent = new Intent();
+            if (imgUri == null) {
+                Log.e("Error", "Image URI is null");
+            } else {
                 intent.putExtra("product", product);
+                intent.putExtra("imgUri", imgUri.toString());
+                Log.i("imgUri", "Got uri path: " + imgUri.getPath() + " Got uri string: " + imgUri.toString());
                 setResult(RESULT_OK, intent);
                 finish();
             }
         });
     }
+
 }

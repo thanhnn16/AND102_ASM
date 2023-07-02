@@ -10,12 +10,8 @@
 
         <!-- Change default font family -->
 
-        <!--<item name="android:fontFamily">@font/dosis</item>
-        <item name="android:fontVariationSettings">"wght" 700</item>
-        <item name="android:fontStyle">normal</item>
-        <item name="android:fontWeight">700</item>
-        <item name="android:textFontWeight">700</item>
-        <item name="android:font">@font/dosis</item>-->
+<!--        <item name="android:fontFamily">@font/ysabeauoffice_italic_variablefont_wght</item>-->
+        <item name="android:fontFamily">@font/ysabeauoffice_variablefont_wght</item>
 
     </style>
 

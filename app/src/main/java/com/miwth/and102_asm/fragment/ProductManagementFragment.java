@@ -2,10 +2,14 @@ package com.miwth.and102_asm.fragment;
 
 import static android.app.Activity.RESULT_OK;
 
-import static com.miwth.and102_asm.users.UserAuth.mAuth;
-
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -13,23 +17,16 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.adapter.ProductAdapter;
@@ -43,18 +40,12 @@ import java.util.List;
 
 public class ProductManagementFragment extends Fragment implements ProductDAO, UserAuth {
 
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     RecyclerView recyclerView;
     ProductAdapter productAdapter;
     List<Product> productArrayList;
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-    public ProductManagementFragment() {
-    }
-
+    LottieAnimationView lottieAnimationView;
     ActivityResultLauncher<Intent> getNewProduct = registerForActivityResult(new
                     ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -63,17 +54,27 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
                     if (result.getResultCode() == RESULT_OK) {
                         Intent intent = result.getData();
                         if (intent == null) {
-                            Toast.makeText(getActivity(), "Intent is null", Toast.LENGTH_SHORT).show();;
+                            Toast.makeText(getActivity(), "Intent is null", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         Product product = (Product) intent.getSerializableExtra("product");
+                        String imageUri = intent.getStringExtra("imgUri");
                         productArrayList.add(product);
                         productAdapter.notifyDataSetChanged();
                         Log.i("ProductManagement", "onActivityResult: got product");
                         insert(product, getUID());
+                        uploadImg(Uri.parse((imageUri)), product.getProductID(), getActivity());
+                        stopAnimation();
+                        productAdapter.notifyDataSetChanged();
+                        reloadFragment();
                     }
                 }
             });
+    private String mParam1;
+    private String mParam2;
+
+    public ProductManagementFragment() {
+    }
 
     public static ProductManagementFragment newInstance(String param1, String param2) {
         ProductManagementFragment fragment = new ProductManagementFragment();
@@ -97,7 +98,25 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        productArrayList = readFromFirebase(getUID());
+        productArrayList = new ArrayList<>();
+        mDatabase.child(getUID()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DataSnapshot snapshot = task.getResult();
+                    productArrayList.clear();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Product product = dataSnapshot.getValue(Product.class);
+                        productArrayList.add(product);
+                        stopAnimation();
+                    }
+                    productAdapter.notifyDataSetChanged();
+                } else {
+                    Log.e("ProductManagement", "Error getting data", task.getException());
+                }
+            }
+        });
+
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_product_management, container, false);
@@ -108,6 +127,8 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
         productAdapter = new ProductAdapter(getContext(), (ArrayList<Product>) productArrayList);
         recyclerView.setAdapter(productAdapter);
         FloatingActionButton fabAdd = view.findViewById(R.id.fabAddProduct);
+
+        lottieAnimationView = view.findViewById(R.id.animationViewLoading);
 
         ValueEventListener productsValueEventListener = new ValueEventListener() {
             @Override
@@ -133,12 +154,23 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
                 getNewProduct.launch(new Intent(getContext(), AddProductActivity.class));
             }
         });
-
         return view;
     }
 
+    public void stopAnimation() {
+        lottieAnimationView.setVisibility(View.GONE);
+        lottieAnimationView.cancelAnimation();
+    }
 
-
-
+    public void reloadFragment() {
+        FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        Fragment currentFragment = getChildFragmentManager().findFragmentByTag(ProductManagementFragment.class.getName());
+        if (currentFragment != null) {
+            fragmentTransaction.detach(currentFragment);
+            fragmentTransaction.attach(currentFragment);
+            fragmentTransaction.addToBackStack(null); // Thêm vào Back Stack
+            fragmentTransaction.commit();
+        }
+    }
 
 }

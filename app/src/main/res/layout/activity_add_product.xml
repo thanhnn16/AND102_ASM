@@ -4,73 +4,110 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/img"
     android:gravity="center"
-    android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".database.AddProductActivity">
+<androidx.cardview.widget.CardView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:layout_marginBottom="32dp"
+    android:backgroundTint="@android:color/transparent">
+    <ImageView
+        android:id="@+id/imgProduct"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:contentDescription="Upload image"
+        android:scaleType="fitXY"
+        android:src="@drawable/baseline_file_upload_24" />
 
-    <EditText
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Click to upload image"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="5dp" />
+
+
+</androidx.cardview.widget.CardView>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
         android:hint="Product ID"
-        android:id="@+id/etProductId"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginVertical="8dp"
-        android:inputType="number" />
+        app:counterEnabled="true"
+        app:counterMaxLength="10">
 
-<!--    Edit text product name-->
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Product Name"
-        android:id="@+id/etProductName"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginVertical="8dp"
-        android:inputType="text" />
-
-
-<!--    Edit text product price-->
-
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etProductId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Product Price"
+            android:inputType="number"
+            android:maxLength="10" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:hint="Product Name"
+        app:counterEnabled="true"
+        app:counterMaxLength="50">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLength="50" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:hint="Product Price"
+        app:counterEnabled="true"
+        app:counterMaxLength="10"
+        app:suffixText="$">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etProductPrice"
-            android:layout_marginHorizontal="32dp"
-            android:layout_marginVertical="8dp"
-            android:inputType="numberDecimal" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            app:counterMaxLength="10" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-
-    <!--    Edit text product quantity-->
-
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
         android:hint="Product Quantity"
-        android:id="@+id/etProductQuantity"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginVertical="8dp"
-        android:inputType="number" />
+        app:counterEnabled="true"
+        app:counterMaxLength="8">
 
-<!--    Edittext img src-->
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Product Image"
-        android:id="@+id/etProductImage"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginVertical="8dp"
-        android:inputType="text" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etProductQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="8" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Product"
         android:id="@+id/btnAddProduct"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginVertical="8dp"
-        android:textColor="@color/white" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/btn_login"
+        android:text="Add Product"
+        android:textColor="@color/white"
+        app:cornerRadius="8dp" />
 
 </LinearLayout>

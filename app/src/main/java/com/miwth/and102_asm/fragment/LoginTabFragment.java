@@ -1,5 +1,6 @@
 package com.miwth.and102_asm.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.miwth.and102_asm.R;
+import com.miwth.and102_asm.users.ForgotPasswordActivity;
 import com.miwth.and102_asm.users.UserAuth;
 
 public class LoginTabFragment extends Fragment implements UserAuth {
@@ -22,7 +24,7 @@ public class LoginTabFragment extends Fragment implements UserAuth {
     SharedPreferences.Editor editor;
     LottieAnimationView buttonAnimation;
     LinearLayout btnLogin;
-    TextView tvLogin;
+    TextView tvLogin, tvForgotPassword;
     private OnLoginListener onLoginListener;
 
     @Override
@@ -32,12 +34,17 @@ public class LoginTabFragment extends Fragment implements UserAuth {
         TextInputEditText etEmail = loginTabFragment.findViewById(R.id.edtEmail);
         TextInputEditText etPassword = loginTabFragment.findViewById(R.id.edtPassword);
         CheckBox cbRememberMe = loginTabFragment.findViewById(R.id.cbRememberMe);
-        TextView tvForgotPassword = loginTabFragment.findViewById(R.id.tvForgotPassword);
+        tvForgotPassword = loginTabFragment.findViewById(R.id.tvForgotPassword);
         btnLogin = loginTabFragment.findViewById(R.id.btnLogin);
         tvLogin = loginTabFragment.findViewById(R.id.tvLogin);
         buttonAnimation = loginTabFragment.findViewById(R.id.button_animation);
 
-
+        tvForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ForgotPasswordActivity.class));
+            }
+        });
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

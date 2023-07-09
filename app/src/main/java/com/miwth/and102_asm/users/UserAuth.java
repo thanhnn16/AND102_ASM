@@ -10,11 +10,15 @@ public interface UserAuth {
     }
 
     default String getUID() {
-        return mAuth.getCurrentUser().getUid();
+        return (mAuth.getCurrentUser()).getUid();
     }
 
     default String getUserEmail() {
-        return mAuth.getCurrentUser().getEmail();
+        return (mAuth.getCurrentUser()).getEmail();
+    }
+
+    default String getDisplayName() {
+        return (mAuth.getCurrentUser()).getDisplayName();
     }
 
     default void logout() {

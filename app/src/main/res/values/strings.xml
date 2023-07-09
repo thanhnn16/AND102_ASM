@@ -3,4 +3,20 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="go_back">Go back</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="phone_num_or_mail">Please enter your email\nor phone number to continue.</string>
+    <string name="phone_or_email">Phone or Email</string>
+    <string name="enter_code">Enter Code</string>
+    <string name="send">Send</string>
+    <string name="verify">Verify</string>
+    <string name="background_image">Background image</string>
+    <string name="forgot_your_password">Forgot your password</string>
+    <string name="welcome_back">Welcome back,</string>
+    <string name="profile_picture">Profile picture</string>
+    <string name="account_management">Account management</string>
+    <string name="update_info">Update profile</string>
+    <string name="change_password">Change password</string>
+    <string name="logout">Logout</string>
+    <string name="exit_app">Exit</string>
 </resources>

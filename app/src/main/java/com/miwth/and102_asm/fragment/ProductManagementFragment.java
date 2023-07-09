@@ -17,9 +17,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,13 +39,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductManagementFragment extends Fragment implements ProductDAO, UserAuth {
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     RecyclerView recyclerView;
     ProductAdapter productAdapter;
     List<Product> productArrayList;
     LottieAnimationView lottieAnimationView;
+    SwipeRefreshLayout swipeRefreshLayout;
+
     ActivityResultLauncher<Intent> getNewProduct = registerForActivityResult(new
                     ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -65,39 +64,14 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
                         insert(product, getUID());
                         uploadImg(Uri.parse((imageUri)), product.getProductID(), getActivity());
                         stopAnimation();
-                        productAdapter.notifyDataSetChanged();
-                        reloadFragment();
+                        swipeRefreshLayout.setRefreshing(true);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 }
             });
-    private String mParam1;
-    private String mParam2;
-
-    public ProductManagementFragment() {
-    }
-
-    public static ProductManagementFragment newInstance(String param1, String param2) {
-        ProductManagementFragment fragment = new ProductManagementFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         productArrayList = new ArrayList<>();
         mDatabase.child(getUID()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -117,10 +91,9 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
             }
         });
 
-        // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_product_management, container, false);
         recyclerView = view.findViewById(R.id.recyclerViewProductManagement);
+
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -129,6 +102,7 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
         FloatingActionButton fabAdd = view.findViewById(R.id.fabAddProduct);
 
         lottieAnimationView = view.findViewById(R.id.animationViewLoading);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayoutProductManagement);
 
         ValueEventListener productsValueEventListener = new ValueEventListener() {
             @Override
@@ -154,6 +128,14 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
                 getNewProduct.launch(new Intent(getContext(), AddProductActivity.class));
             }
         });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+                productAdapter.notifyDataSetChanged();
+            }
+        });
         return view;
     }
 
@@ -161,16 +143,4 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
         lottieAnimationView.setVisibility(View.GONE);
         lottieAnimationView.cancelAnimation();
     }
-
-    public void reloadFragment() {
-        FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        Fragment currentFragment = getChildFragmentManager().findFragmentByTag(ProductManagementFragment.class.getName());
-        if (currentFragment != null) {
-            fragmentTransaction.detach(currentFragment);
-            fragmentTransaction.attach(currentFragment);
-            fragmentTransaction.addToBackStack(null); // Thêm vào Back Stack
-            fragmentTransaction.commit();
-        }
-    }
-
 }

@@ -7,13 +7,15 @@
     android:background="@drawable/product_item_list_bg"
     android:padding="10dp">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_product_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
         android:src="@drawable/ic_launcher_background"
-        app:cornerRadius="10dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        app:shapeAppearanceOverlay="@style/roundedImageView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -1,18 +1,17 @@
 package com.miwth.and102_asm.users;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -21,7 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -164,7 +162,7 @@ public class LoginActivity extends AppCompatActivity implements OnLoginListener,
     public void onLoginSuccess(String email) {
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
         Toast.makeText(this, "Login succeed\nWelcome " + email, Toast.LENGTH_SHORT).show();
-        finish();
+        finishAffinity();
     }
     @Override
     public void onLoginFailure(String errorMessage) {

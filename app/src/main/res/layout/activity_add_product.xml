@@ -25,12 +25,12 @@
         android:src="@drawable/baseline_file_upload_24" />
 
     <TextView
+        android:id="@+id/tvUploadImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Click to upload image"
         android:layout_gravity="bottom|center"
         android:layout_marginBottom="5dp" />
-
 
 </androidx.cardview.widget.CardView>
 

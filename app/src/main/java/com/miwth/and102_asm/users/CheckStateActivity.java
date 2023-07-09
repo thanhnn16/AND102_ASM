@@ -26,12 +26,20 @@ public class CheckStateActivity extends AppCompatActivity implements UserAuth {
 
         myRef.setValue("Hello, World!");
         sharedPreferences = getSharedPreferences("login_state", MODE_PRIVATE);
+        Boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (isUserLoggedIn() || sharedPreferences.getBoolean("is_logged_in", false)) {
-                    startMainActivity();
-                }else {
+                if (isUserLoggedIn()) {
+                    if (getUserEmail() != null && getDisplayName() == null) {
+                        if (isLoggedIn) {
+                            startMainActivity();
+                        } else {
+                            logout();
+                            startLoginActivity();
+                        }
+                    } else startMainActivity();
+                } else {
                     startLoginActivity();
                 }
             }
@@ -40,7 +48,15 @@ public class CheckStateActivity extends AppCompatActivity implements UserAuth {
 
     private void startMainActivity() {
         startActivity(new Intent(CheckStateActivity.this, MainActivity.class));
-        Toast.makeText(CheckStateActivity.this, "Welcome back " + getUserEmail(), Toast.LENGTH_SHORT).show();
+        if (getDisplayName() == null && getUserEmail() == null) {
+            sharedPreferences = getSharedPreferences("login_state", MODE_PRIVATE);
+            String phoneNumber = sharedPreferences.getString("phoneNumber", "");
+            Toast.makeText(CheckStateActivity.this, "Welcome back\n" + phoneNumber, Toast.LENGTH_SHORT).show();
+        } else if (getDisplayName() == null && getUserEmail() != null) {
+            Toast.makeText(CheckStateActivity.this, "Welcome back\n" + getUserEmail(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(CheckStateActivity.this, "Welcome back\n" + getDisplayName(), Toast.LENGTH_SHORT).show();
+        }
         finishAffinity();
     }
 

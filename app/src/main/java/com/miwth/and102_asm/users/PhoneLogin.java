@@ -1,13 +1,13 @@
 package com.miwth.and102_asm.users;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,15 +15,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.miwth.and102_asm.MainActivity;
 import com.miwth.and102_asm.R;
-import com.miwth.and102_asm.fragment.OnLoginListener;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,8 +29,10 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
     String mVerificationId;
     EditText edtPhone, edtCode;
     Button btnSend, btnVerify;
-    TextView tvGoBack;
+    ImageButton tvGoBack;
     LottieAnimationView lottieAnimationView;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +51,6 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
         tvGoBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PhoneLogin.this, LoginActivity.class));
                 finish();
             }
         });
@@ -71,10 +69,10 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
                 }
                 else {
                     countDown();
-                    edtCode.requestFocus();
                     edtCode.setError(null);
                     btnVerify.setEnabled(true);
                     edtCode.setEnabled(true);
+                    edtCode.requestFocus();
                     btnVerify.setBackgroundColor(getResources().getColor(R.color.btn_login, null));
                     btnVerify.setTextColor(getResources().getColor(R.color.white, null));
                     startPhoneNumberVerification(phone);
@@ -157,6 +155,10 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
                         // Sign in success
                         Toast.makeText(this, "Logged in with OTP", Toast.LENGTH_SHORT).show();
                         Intent newIntent = new Intent(PhoneLogin.this, MainActivity.class);
+                        sharedPreferences = getSharedPreferences("login_state", MODE_PRIVATE);
+                        editor = sharedPreferences.edit();
+                        editor.putString("phoneNumber", edtPhone.getText().toString());
+                        editor.apply();
 //                        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(newIntent);
 //                        finish();

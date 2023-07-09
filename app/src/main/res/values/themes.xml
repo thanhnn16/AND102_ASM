@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.AND102_ASM" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
@@ -7,13 +7,19 @@
 <!--        <item name="android:background">@color/white</item>-->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-
         <!-- Change default font family -->
 
-<!--        <item name="android:fontFamily">@font/ysabeauoffice_italic_variablefont_wght</item>-->
+        <!--        <item name="android:fontFamily">@font/ysabeauoffice_italic_variablefont_wght</item>-->
         <item name="android:fontFamily">@font/ysabeauoffice_variablefont_wght</item>
 
     </style>
 
     <style name="Theme.AND102_ASM" parent="Base.Theme.AND102_ASM" />
+
+    <style name="roundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+        <item name="color">@android:color/transparent</item>
+
+    </style>
 </resources>

@@ -1,14 +1,14 @@
 package com.miwth.and102_asm.database;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -20,11 +20,6 @@ import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.fragment.ProductManagementFragment;
 import com.miwth.and102_asm.model.Product;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Objects;
 
 public class AddProductActivity extends AppCompatActivity{
@@ -33,7 +28,7 @@ public class AddProductActivity extends AppCompatActivity{
     Button btnAddProduct;
     ProductManagementFragment productManagementFragment;
     ImageView imgProduct;
-
+    TextView tvUploadImage;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     Uri imgUri;
 
@@ -44,6 +39,7 @@ public class AddProductActivity extends AppCompatActivity{
             if (data != null) {
                 imgUri = data.getData();
                 imgProduct.setImageURI(imgUri);
+                tvUploadImage.setVisibility(View.GONE);
                 }
         }
     });
@@ -58,6 +54,7 @@ public class AddProductActivity extends AppCompatActivity{
         edtProductPrice = findViewById(R.id.etProductPrice);
         edtProductQuantity = findViewById(R.id.etProductQuantity);
         imgProduct = findViewById(R.id.imgProduct);
+        tvUploadImage = findViewById(R.id.tvUploadImage);
 
         productManagementFragment = new ProductManagementFragment();
         btnAddProduct = findViewById(R.id.btnAddProduct);

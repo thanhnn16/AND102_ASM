@@ -2,6 +2,7 @@ package com.miwth.and102_asm;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -70,23 +71,37 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment selectedFragment = null;
 
-                if (item.getItemId() == R.id.nav_account) {
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_account) {
                     selectedFragment = new AccountFragment();
                     toolbarTitle.setText("Account");
 
-                } else if (item.getItemId() == R.id.nav_prod_mgmt) {
+                } else if (itemId == R.id.nav_prod_mgmt) {
                     selectedFragment = new ProductManagementFragment();
                     toolbarTitle.setText("Products Management");
 
-                } else if (item.getItemId() == R.id.nav_about) {
+                } else if (itemId == R.id.nav_about) {
                     selectedFragment = new AboutMeFragment();
                     toolbarTitle.setText("About Me");
 
-                } else if (item.getItemId() == R.id.nav_settings) {
+                } else if (itemId == R.id.nav_settings) {
                     selectedFragment = new SettingsFragment();
                     toolbarTitle.setText("Settings");
 
-                } else if (item.getItemId() == R.id.nav_logout) {
+                } else if (itemId == R.id.nav_admin) {
+                    Intent dialIntent = new Intent(Intent.ACTION_DIAL);
+                    dialIntent.setData(Uri.parse("tel:0346542636"));
+                    startActivity(dialIntent);
+
+                } else if (itemId == R.id.nav_email) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("text/plain");
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"nongnguyenthanh.0106@gmail.com"});
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Message");
+                    startActivity(Intent.createChooser(emailIntent, "Send Email"));
+
+                } else if (itemId == R.id.nav_logout) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Logout");
                     builder.setIcon(R.drawable.baseline_logout_24);
@@ -103,17 +118,21 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
                     builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
                     AlertDialog alertDialog = builder.create();
                     alertDialog.show();
-                    return false;
                 }
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, selectedFragment)
-                        .commit();
-                drawerLayout.close();
-                return true;
+                if (selectedFragment != null) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, selectedFragment)
+                            .commit();
+                    drawerLayout.close();
+                    return true;
+                }
+
+                return false;
             }
         });
+
 
     }
 }

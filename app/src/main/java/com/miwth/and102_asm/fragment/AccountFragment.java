@@ -1,20 +1,27 @@
 package com.miwth.and102_asm.fragment;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -33,7 +40,33 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     RelativeLayout btnProfileDetail, btnEditProfile, btnChangePassword, btnLogout, btnExit;
-    Uri setImageURI;
+    FirebaseUser user;
+
+    ActivityResultLauncher<Intent> updateInfo = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == RESULT_OK) {
+                        ProgressBar progressBar = new ProgressBar(requireActivity());
+                        progressBar.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT));
+                        progressBar.setVisibility(View.VISIBLE);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                requireActivity().getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.fragment_container, new AccountFragment())
+                                        .commit();
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        }, 1000);
+                    }
+                }
+            }
+    );
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,7 +84,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
         btnLogout = view.findViewById(R.id.logout);
         btnExit = view.findViewById(R.id.exitApp);
 
-        FirebaseUser user = mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
         if (user != null) {
             if (user.getDisplayName() == null && user.getEmail() == null) {
                 String phoneNumber = sharedPreferences.getString("phoneNumber", "");
@@ -78,7 +111,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(requireActivity(), UpdateAccountInfo.class));
+                updateInfo.launch(new Intent(requireActivity(), UpdateAccountInfo.class));
             }
         });
 
@@ -105,14 +138,6 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
         return view;
     }
 
-    public void setImageForUpload(Uri imageUri) {
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_profile_information, null);
-        ShapeableImageView ivUpload = view.findViewById(R.id.uploadAvatar);
-        Glide.with(this).load(imageUri).fitCenter().into(ivUpload);
-        Log.i("imageUri", "Set done: " + imageUri.toString());
-    }
-
     public void DialogUpdateProfile() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
@@ -124,6 +149,38 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
         TextView tvEmail = view.findViewById(R.id.tvEmail);
         TextView tvBirthday = view.findViewById(R.id.tvBirthday);
         TextView tvBio = view.findViewById(R.id.tvBio);
+
+        if (user.getPhotoUrl() != null) {
+            String photoUrlString = Objects.requireNonNull(user.getPhotoUrl()).toString();
+            Glide.with(this).load(photoUrlString).fitCenter().into(ivUpload);
+            Log.i("photoUrl", photoUrlString);
+        } else {
+            Glide.with(requireActivity())
+                    .load(avatarImagesRef.child(getUID()))
+                    .fitCenter()
+                    .into(ivUpload);
+        }
+
+        Log.i("imageUri", "Set done: " + avatarImagesRef.child(getUID()));
+
+
+        tvDisplayName.setText(getDisplayName());
+
+        tvEmail.setText(getUserEmail());
+
+        getBirthdayAndBio(new Callback() {
+            @Override
+            public void onBirthdayLoaded(String birthday) {
+                Log.i("birthday", birthday);
+                tvBirthday.setText(birthday);
+            }
+
+            @Override
+            public void onBioLoaded(String bio) {
+                Log.i("bio", bio);
+                tvBio.setText(bio);
+            }
+        });
 
         ImageButton btnClose = view.findViewById(R.id.btnClose);
 

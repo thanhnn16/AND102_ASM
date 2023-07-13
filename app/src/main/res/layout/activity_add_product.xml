@@ -15,7 +15,7 @@
         tools:ignore="ContentDescription" />
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/imgProduct"
+        android:id="@+id/ivProfilePicture"
         android:layout_width="113dp"
         android:layout_height="115dp"
         android:layout_gravity="center"
@@ -38,10 +38,10 @@
         android:text="@string/click_to_upload_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imgProduct" />
+        app:layout_constraintTop_toBottomOf="@id/ivProfilePicture" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilProductId"
+        android:id="@+id/tilDisplayName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
@@ -62,14 +62,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilProductName"
+        android:id="@+id/tilDOB"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
         android:hint="@string/product_name"
         app:counterEnabled="true"
         app:counterMaxLength="50"
-        app:layout_constraintTop_toBottomOf="@id/tilProductId">
+        app:layout_constraintTop_toBottomOf="@id/tilDisplayName">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etProductName"
@@ -81,14 +81,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilProductPrice"
+        android:id="@+id/tilBio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
         android:hint="@string/product_price"
         app:counterEnabled="true"
         app:counterMaxLength="10"
-        app:layout_constraintTop_toBottomOf="@id/tilProductName"
+        app:layout_constraintTop_toBottomOf="@id/tilDOB"
         app:suffixText="$">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -107,7 +107,7 @@
         android:hint="@string/product_quantity"
         app:counterEnabled="true"
         app:counterMaxLength="8"
-        app:layout_constraintTop_toBottomOf="@id/tilProductPrice">
+        app:layout_constraintTop_toBottomOf="@id/tilBio">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etProductQuantity"

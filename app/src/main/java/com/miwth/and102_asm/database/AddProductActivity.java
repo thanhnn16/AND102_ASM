@@ -69,7 +69,7 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
         edtProductName = findViewById(R.id.etProductName);
         edtProductPrice = findViewById(R.id.etProductPrice);
         edtProductQuantity = findViewById(R.id.etProductQuantity);
-        imgProduct = findViewById(R.id.imgProduct);
+        imgProduct = findViewById(R.id.ivProfilePicture);
         tvUploadImage = findViewById(R.id.tvUploadImage);
 
         Intent getData = getIntent();

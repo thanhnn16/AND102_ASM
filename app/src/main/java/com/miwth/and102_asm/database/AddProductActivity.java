@@ -1,5 +1,7 @@
 package com.miwth.and102_asm.database;
 
+import static com.yalantis.ucrop.UCrop.RESULT_ERROR;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,6 +52,10 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
                     tvUploadImage.setVisibility(View.GONE);
                 }
             }
+            if (result.getResultCode() == RESULT_ERROR) {
+                onBackPressed();
+                Toast.makeText(AddProductActivity.this, "Image cropping cancelled", Toast.LENGTH_SHORT).show();
+            }
         }
     });
 
@@ -97,14 +103,15 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
                 return;
             }
             if (productArrayList.size() > 0) {
-                for (int i = 0; true; i++) {
-                    if (productArrayList.get(i).getProductID() == Integer.parseInt(productID)) {
+                for (int i = 0; i < productArrayList.size(); i++) {
+                    if (i >= 0 && i < productArrayList.size() && productArrayList.get(i).getProductID() == Integer.parseInt(productID)) {
                         edtProductID.setError("Product ID already exists");
                         edtProductID.requestFocus();
                         return;
                     }
                 }
             }
+
             if (productName.isEmpty()) {
                 edtProductName.setError("Please enter product name");
                 edtProductName.requestFocus();

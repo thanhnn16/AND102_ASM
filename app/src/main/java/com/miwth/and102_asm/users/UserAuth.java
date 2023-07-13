@@ -44,11 +44,18 @@ public interface UserAuth {
                 new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if (task.isSuccessful()) {
+                        /*if (task.isSuccessful() && task.getResult().getValue() != null) {
                             String birthday = task.getResult().getValue().toString();
                             callback.onBirthdayLoaded(birthday);
                         } else {
+                            String birthday = "";
+                            callback.onBirthdayLoaded(birthday);
                             Log.d("TAG", task.getException().toString());
+                        }*/
+                        DataSnapshot birthdaySnapshot = task.getResult();
+                        if (birthdaySnapshot != null && birthdaySnapshot.getValue() != null) {
+                            String birthday = birthdaySnapshot.getValue().toString();
+                            callback.onBirthdayLoaded(birthday);
                         }
                     }
                 }
@@ -57,11 +64,17 @@ public interface UserAuth {
                 new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if (task.isSuccessful()) {
+                        /*if (task.isSuccessful() && task.getResult().getValue() != null) {
                             String bio = task.getResult().getValue().toString();
                             callback.onBioLoaded(bio);
                         } else {
-                            Log.d("TAG", task.getException().toString());
+                            String bio = "";
+                            callback.onBioLoaded(bio);
+                        }*/
+                        DataSnapshot birthdaySnapshot = task.getResult();
+                        if (birthdaySnapshot != null && birthdaySnapshot.getValue() != null) {
+                            String bio = birthdaySnapshot.getValue().toString();
+                            callback.onBioLoaded(bio);
                         }
                     }
                 }

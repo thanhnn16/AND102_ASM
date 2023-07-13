@@ -1,5 +1,7 @@
 package com.miwth.and102_asm.database;
 
+import static com.yalantis.ucrop.UCrop.RESULT_ERROR;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,11 +29,9 @@ public class ImageCropperActivity extends AppCompatActivity {
         if (intent.getExtras() != null) {
             String imgUri = intent.getStringExtra("stockImgUrl");
             if (imgUri != null) {
-                String destFileName = new StringBuilder()
-                        .append("IMG_")
-                        .append(System.currentTimeMillis())
-                        .append(".jpg")
-                        .toString();
+                String destFileName = "IMG_" +
+                        System.currentTimeMillis() +
+                        ".jpg";
                 Uri destUri = createImageUri(Uri.parse(imgUri), destFileName);
                 UCrop.of(Uri.parse(imgUri), destUri)
                         .withOptions(new UCrop.Options())
@@ -53,8 +53,10 @@ public class ImageCropperActivity extends AppCompatActivity {
                 setResult(RESULT_OK, intent);
                 finish();
             }
-        } else if (resultCode == UCrop.RESULT_ERROR) {
+        } else if (resultCode == RESULT_ERROR) {
             if (data != null) {
+                setResult(RESULT_ERROR);
+                finish();
                 Throwable error = UCrop.getError(data);
                 error.printStackTrace();
             }

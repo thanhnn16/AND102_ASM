@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -57,40 +56,39 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
                             Toast.makeText(getActivity(), "Intent is null", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        Product product = (Product) intent.getSerializableExtra("product");
+                        Product product = intent.getParcelableExtra("product");
                         String imageUri = intent.getStringExtra("imgUri");
                         productArrayList.add(product);
                         productAdapter.notifyDataSetChanged();
                         Log.i("ProductManagement", "onActivityResult: got product");
                         assert product != null;
                         insert(product, getUID());
-                        uploadImg(Uri.parse((imageUri)), product.getProductID(), getActivity());
+                        uploadImg(Uri.parse((imageUri)), product.getProductID(),
+                                requireActivity());
                         stopAnimation();
                         swipeRefreshLayout.setRefreshing(true);
-                        swipeRefreshLayout.setRefreshing(false);
+                        new Handler().postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 500);
                     }
                 }
             });
+
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         productArrayList = new ArrayList<>();
-        mDatabase.child(getUID()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DataSnapshot snapshot = task.getResult();
-                    productArrayList.clear();
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Product product = dataSnapshot.getValue(Product.class);
-                        productArrayList.add(product);
-                        stopAnimation();
-                    }
-                    productAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e("ProductManagement", "Error getting data", task.getException());
+        mDatabase.child(getUID()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot snapshot = task.getResult();
+                productArrayList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Product product = dataSnapshot.getValue(Product.class);
+                    productArrayList.add(product);
+                    stopAnimation();
                 }
+                productAdapter.notifyDataSetChanged();
+            } else {
+                Log.e("ProductManagement", "Error getting data", task.getException());
             }
         });
 
@@ -100,7 +98,7 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        productAdapter = new ProductAdapter(getContext(), (ArrayList<Product>) productArrayList);
+        productAdapter = new ProductAdapter(getContext(), productArrayList);
         recyclerView.setAdapter(productAdapter);
         FloatingActionButton fabAdd = view.findViewById(R.id.fabAddProduct);
 
@@ -126,13 +124,10 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
         };
         mDatabase.child(getUID()).addValueEventListener(productsValueEventListener);
 
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), AddProductActivity.class);
-                intent.putParcelableArrayListExtra("productArrayList", productArrayList);
-                getNewProduct.launch(intent);
-            }
+        fabAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), AddProductActivity.class);
+            intent.putParcelableArrayListExtra("productArrayList", productArrayList);
+            getNewProduct.launch(intent);
         });
 
         swipeRefreshLayout.setOnRefreshListener(() -> {

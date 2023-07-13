@@ -1,5 +1,7 @@
 package com.miwth.and102_asm.users;
 
+import static com.yalantis.ucrop.UCrop.RESULT_ERROR;
+
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,7 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +54,10 @@ public class UpdateAccountInfo extends AppCompatActivity implements UserAuth {
                     ivProfilePicture.setImageURI(resultUri);
                     tvUploadImage.setVisibility(View.GONE);
                 }
+            }
+            if (result.getResultCode() == RESULT_ERROR) {
+                onBackPressed();
+                Toast.makeText(UpdateAccountInfo.this, "Image cropping cancelled", Toast.LENGTH_SHORT).show();
             }
         }
     });
@@ -110,16 +115,11 @@ public class UpdateAccountInfo extends AppCompatActivity implements UserAuth {
         btnBack.setOnClickListener(v -> onBackPressed());
         btnBack2.setOnClickListener(v -> onBackPressed());
 
-        ivProfilePicture.setOnClickListener(v -> {
-            mGetContent.launch("image/*");
-        });
+        ivProfilePicture.setOnClickListener(v -> mGetContent.launch("image/*"));
 
-        etDOB.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (etDOB.hasFocus()) {
-                    showDatePickerDialog();
-                }
+        etDOB.setOnFocusChangeListener((v, hasFocus) -> {
+            if (etDOB.hasFocus()) {
+                showDatePickerDialog();
             }
         });
         etDOB.setOnClickListener(v -> showDatePickerDialog());
@@ -148,13 +148,10 @@ public class UpdateAccountInfo extends AppCompatActivity implements UserAuth {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // Xử lý ngày được chọn
-                String selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth, monthOfYear + 1, year);
-                etDOB.setText(selectedDate);
-            }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year1, monthOfYear, dayOfMonth1) -> {
+            // Xử lý ngày được chọn
+            String selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth1, monthOfYear + 1, year1);
+            etDOB.setText(selectedDate);
         }, dayOfMonth, month, year);
         Calendar minDate = Calendar.getInstance();
         minDate.set(1980, Calendar.JANUARY, 1);

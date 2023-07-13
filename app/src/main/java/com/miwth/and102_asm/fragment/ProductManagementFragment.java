@@ -2,6 +2,7 @@ package com.miwth.and102_asm.fragment;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,18 +37,18 @@ import com.miwth.and102_asm.model.Product;
 import com.miwth.and102_asm.users.UserAuth;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ProductManagementFragment extends Fragment implements ProductDAO, UserAuth {
     RecyclerView recyclerView;
     ProductAdapter productAdapter;
-    List<Product> productArrayList;
+    ArrayList<Product> productArrayList;
     LottieAnimationView lottieAnimationView;
     SwipeRefreshLayout swipeRefreshLayout;
 
     ActivityResultLauncher<Intent> getNewProduct = registerForActivityResult(new
                     ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
+                @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == RESULT_OK) {
@@ -61,6 +62,7 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
                         productArrayList.add(product);
                         productAdapter.notifyDataSetChanged();
                         Log.i("ProductManagement", "onActivityResult: got product");
+                        assert product != null;
                         insert(product, getUID());
                         uploadImg(Uri.parse((imageUri)), product.getProductID(), getActivity());
                         stopAnimation();
@@ -74,6 +76,7 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
                              Bundle savedInstanceState) {
         productArrayList = new ArrayList<>();
         mDatabase.child(getUID()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -105,6 +108,7 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayoutProductManagement);
 
         ValueEventListener productsValueEventListener = new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 productArrayList.clear();
@@ -125,16 +129,15 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNewProduct.launch(new Intent(getContext(), AddProductActivity.class));
+                Intent intent = new Intent(getContext(), AddProductActivity.class);
+                intent.putParcelableArrayListExtra("productArrayList", productArrayList);
+                getNewProduct.launch(intent);
             }
         });
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(false);
-                productAdapter.notifyDataSetChanged();
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            swipeRefreshLayout.setRefreshing(false);
+            productAdapter.notifyDataSetChanged();
         });
         return view;
     }

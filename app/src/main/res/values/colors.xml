@@ -23,6 +23,7 @@
     <color name="btn_login_text_disabled">#80FFFFFF</color>
     <color name="btn_login_disabled">#800386D0</color>
     <color name="gray_light">#A6A6A6</color>
+    <color name="transparent">#00000000</color>
 
 
 </resources>

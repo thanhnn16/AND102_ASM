@@ -8,32 +8,49 @@
         android:id="@+id/nav_account"
         android:icon="@drawable/baseline_account_circle_24"
         android:iconTint="@color/btn_login"
-        android:title="Account" />
+        android:title="@string/account" />
     <item
         android:id="@+id/nav_prod_mgmt"
         android:icon="@drawable/baseline_shopping_bag_24"
         android:iconTint="@color/btn_login"
-        android:title="Product Management" />
+        android:title="@string/product_management" />
 
     <item
         android:id="@+id/nav_about"
         android:icon="@drawable/baseline_info_24"
         android:iconTint="@color/btn_login"
-        android:title="About" />
+        android:title="@string/about" />
 
     <group android:checkableBehavior="single">
-        <item android:title="More">
+        <item android:title="@string/more">
             <menu>
                 <item
                     android:id="@+id/nav_settings"
                     android:icon="@drawable/baseline_settings_24"
                     android:iconTint="@color/btn_login"
-                    android:title="Settings" />
+                    android:title="@string/settings" />
                 <item
                     android:id="@+id/nav_logout"
                     android:icon="@drawable/baseline_logout_24"
                     android:iconTint="@color/btn_login"
-                    android:title="Logout" />
+                    android:title="@string/logout" />
+            </menu>
+        </item>
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item android:title="@string/contact_me">
+            <menu>
+                <item
+                    android:id="@+id/nav_admin"
+                    android:icon="@drawable/phone_38"
+                    android:iconTint="@color/btn_login"
+                    android:title="@string/_0346542636" />
+                <item
+                    android:id="@+id/nav_email"
+                    android:icon="@drawable/email_24"
+                    android:iconTint="@color/btn_login"
+                    android:title="@string/nongnguyenthanh_0106_gmail_com" />
             </menu>
         </item>
     </group>

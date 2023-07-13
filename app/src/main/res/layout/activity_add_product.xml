@@ -1,46 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img"
-    android:gravity="center"
-    android:orientation="vertical"
     tools:context=".database.AddProductActivity">
-<androidx.cardview.widget.CardView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:layout_marginBottom="32dp"
-    android:backgroundTint="@android:color/transparent">
+
     <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:scaleType="center"
+        android:src="@drawable/background_img"
+        tools:ignore="ContentDescription" />
+
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgProduct"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="113dp"
+        android:layout_height="115dp"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:contentDescription="Upload image"
+        android:layout_marginTop="64dp"
+        android:contentDescription="@string/upload_image"
         android:scaleType="fitXY"
-        android:src="@drawable/baseline_file_upload_24" />
+        android:src="@drawable/baseline_file_upload_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/roundedImageView" />
 
     <TextView
         android:id="@+id/tvUploadImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Click to upload image"
         android:layout_gravity="bottom|center"
-        android:layout_marginBottom="5dp" />
-
-</androidx.cardview.widget.CardView>
+        android:layout_marginBottom="16dp"
+        android:text="@string/click_to_upload_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgProduct" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilProductId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:hint="Product ID"
+        android:hint="@string/product_id"
         app:counterEnabled="true"
-        app:counterMaxLength="10">
+        app:counterMaxLength="10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvUploadImage">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etProductId"
@@ -52,12 +62,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilProductName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:hint="Product Name"
+        android:hint="@string/product_name"
         app:counterEnabled="true"
-        app:counterMaxLength="50">
+        app:counterMaxLength="50"
+        app:layout_constraintTop_toBottomOf="@id/tilProductId">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etProductName"
@@ -69,12 +81,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilProductPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:hint="Product Price"
+        android:hint="@string/product_price"
         app:counterEnabled="true"
         app:counterMaxLength="10"
+        app:layout_constraintTop_toBottomOf="@id/tilProductName"
         app:suffixText="$">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -86,12 +100,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilProductQuantity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:hint="Product Quantity"
+        android:hint="@string/product_quantity"
         app:counterEnabled="true"
-        app:counterMaxLength="8">
+        app:counterMaxLength="8"
+        app:layout_constraintTop_toBottomOf="@id/tilProductPrice">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etProductQuantity"
@@ -106,8 +122,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/btn_login"
-        android:text="Add Product"
+        android:text="@string/add_product"
         android:textColor="@color/white"
-        app:cornerRadius="8dp" />
+        app:cornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilProductQuantity" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/btnGoBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/btn_login_disabled"
+        android:drawableLeft="@drawable/arrow_back_ios_new_24_white"
+        android:text="@string/back"
+        android:textColor="@color/white"
+        app:cornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnAddProduct"
+        tools:ignore="RtlHardcoded" />
+</androidx.constraintlayout.widget.ConstraintLayout>

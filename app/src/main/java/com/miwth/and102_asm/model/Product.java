@@ -1,15 +1,19 @@
 package com.miwth.and102_asm.model;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Product implements Serializable {
+import androidx.annotation.NonNull;
+
+
+public class Product implements Parcelable {
     private int productID;
     private String productName;
     private String productPrice;
     private int productQuantity;
     private String imgSrc;
     private String useID;
-    
+
     public Product() {
         // Default constructor required for Firebase deserialization
     }
@@ -69,4 +73,41 @@ public class Product implements Serializable {
     public void setUseID(String useID) {
         this.useID = useID;
     }
+
+    public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
+
+    protected Product(Parcel in) {
+        productID = in.readInt();
+        productName = in.readString();
+        productPrice = in.readString();
+        productQuantity = in.readInt();
+        imgSrc = in.readString();
+        useID = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(productID);
+        dest.writeString(productName);
+        dest.writeString(productPrice);
+        dest.writeInt(productQuantity);
+        dest.writeString(imgSrc);
+        dest.writeString(useID);
+    }
+
 }

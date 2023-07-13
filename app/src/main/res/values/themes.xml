@@ -4,7 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <!-- Add the following item to make the status bar transparent -->
-<!--        <item name="android:background">@color/white</item>-->
+        <!--        <item name="android:background">@color/white</item>-->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <!-- Change default font family -->
@@ -20,6 +20,11 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
         <item name="color">@android:color/transparent</item>
+    </style>
 
+    <style name="circleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+        <item name="color">@android:color/transparent</item>
     </style>
 </resources>

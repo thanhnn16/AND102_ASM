@@ -56,7 +56,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 return;
             }
             File finalLocalFile = localFile;
-            imagesRef.child(productID).getFile(localFile).addOnSuccessListener(taskSnapshot -> {
+            productImagesRef.child(productID).getFile(localFile).addOnSuccessListener(taskSnapshot -> {
                 // Local temp file has been created
                 Glide.with(holder.iv_product_image.getContext())
                         .load(finalLocalFile)

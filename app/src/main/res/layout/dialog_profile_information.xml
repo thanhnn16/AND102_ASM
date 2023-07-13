@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="64dp">
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:contentDescription="@string/close_dialog"
+            android:src="@drawable/baseline_clear_48" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/uploadAvatar"
+            android:layout_width="113dp"
+            android:layout_height="115dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/avatar"
+            android:scaleType="centerCrop"
+            android:src="@drawable/baseline_account_circle_24"
+            app:shapeAppearanceOverlay="@style/roundedImageView" />
+
+        <TextView
+            android:id="@+id/tvDisplayName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="16dp"
+            android:autofillHints="name"
+            android:drawablePadding="10dp"
+            android:maxLength="50"
+            android:text="@string/display_name"
+            android:textSize="24sp"
+            app:drawableStartCompat="@drawable/baseline_account_circle_24"
+            app:drawableTint="@color/btn_login" />
+
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="16dp"
+            android:autofillHints="name"
+            android:drawablePadding="10dp"
+            android:maxLength="50"
+            android:text="@string/email"
+            android:textSize="24sp"
+            app:drawableStartCompat="@drawable/email_24"
+            app:drawableTint="@color/btn_login" />
+
+        <TextView
+            android:id="@+id/tvBirthday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="16dp"
+            android:autofillHints="name"
+            android:drawablePadding="10dp"
+            android:maxLength="50"
+            android:text="@string/birthday"
+            android:textSize="24sp"
+            app:drawableStartCompat="@drawable/baseline_calendar_month_24"
+            app:drawableTint="@color/btn_login" />
+
+        <TextView
+            android:id="@+id/tvBio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="16dp"
+            android:autofillHints="name"
+            android:drawablePadding="10dp"
+            android:maxLength="50"
+            android:text="@string/bio"
+            android:textSize="24sp"
+            app:drawableStartCompat="@drawable/baseline_info_24"
+            app:drawableTint="@color/btn_login" />
+    </LinearLayout>
+</ScrollView>

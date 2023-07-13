@@ -6,12 +6,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.miwth.and102_asm.fragment.ProductManagementFragment;
 import com.miwth.and102_asm.model.Product;
 
 import java.io.ByteArrayOutputStream;
@@ -20,13 +18,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 
 public interface ProductDAO {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://and102-asm-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://and102-asm.appspot.com");
-    StorageReference imagesRef = storage.getReference().child("product_img");
+    StorageReference productImagesRef = storage.getReference().child("product_img");
+    StorageReference avatarImagesRef = storage.getReference().child("avatar_img");
 
     default void insert(Product product, String userId) {
         mDatabase.child(userId).child(String.valueOf(product.getProductID())).setValue(product);
@@ -57,10 +55,14 @@ public interface ProductDAO {
             } catch (IOException e) {
                 Log.e("Error", "Error accessing file: " + e.getMessage());
             }
-            imagesRef.child(String.valueOf(productID)).putFile(Uri.fromFile(outputFile));
+            productImagesRef.child(String.valueOf(productID)).putFile(Uri.fromFile(outputFile));
         } catch (FileNotFoundException e) {
             Log.e("Error", "File not found: " + e.getMessage());
         }
+    }
+
+    default void uploadAvatar(Uri imgUri, String userId, Context context) {
+        avatarImagesRef.child(String.valueOf(userId)).putFile(imgUri);
     }
 
     default void update(Product product, String uid) {

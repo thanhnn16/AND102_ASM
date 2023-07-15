@@ -37,13 +37,14 @@ dependencies {
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout
+    //noinspection GradlePath
     implementation files('C:/Users/Admin/Desktop/ucrop-2.2.8.aar')
     testImplementation libs.junit
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.espresso.core
     implementation platform('com.google.firebase:firebase-bom:32.1.1')
     //noinspection UseTomlInstead
-    implementation 'com.google.firebase:firebase-auth:22.0.0'
+    implementation 'com.google.firebase:firebase-auth:22.1.0'
     implementation libs.play.services.auth
     //noinspection UseTomlInstead
     implementation 'com.google.firebase:firebase-database:20.2.2'
@@ -53,6 +54,6 @@ dependencies {
     implementation libs.firebase.ui.storage
     implementation libs.glide
     implementation libs.androidx.swiperefreshlayout
-    annotationProcessor libs.compiler
+    implementation libs.material
 
 }

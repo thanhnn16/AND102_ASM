@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     tools:context=".fragment.ProductManagementFragment">
+
+    <!--<com.google.android.material.search.SearchView
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="match_parent"
+        app:useDrawerArrowDrawable="true"
+        android:layout_height="50dp"
+        android:hint="@string/search"
+        android:layout_margin="16dp"
+        android:background="@color/btn_login_disabled"
+        android:id="@+id/search_view"/>-->
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bottom_nav_bg" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:layout_width="match_parent"
@@ -18,25 +39,35 @@
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayoutProductManagement"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingHorizontal="32dp"
-        android:paddingVertical="16dp">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_view"
+        android:layout_alignParentBottom="true"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewProductManagement"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddProduct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="32dp"
-        android:src="@drawable/baseline_add_24"
-        android:id="@+id/fabAddProduct"
-        android:backgroundTint="@color/white"
-        android:contentDescription="@string/add_product" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/btn_login"
+        android:contentDescription="@string/add_product"
+        android:drawableLeft="@drawable/baseline_add_24"
+        android:drawablePadding="0dp"
+        android:drawableTint="@color/white"
+        android:text="@string/add_product"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        tools:ignore="RelativeOverlap,RtlHardcoded" />
 
-</FrameLayout>
+</RelativeLayout>

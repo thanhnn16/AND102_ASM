@@ -13,6 +13,7 @@ public class Product implements Parcelable {
     private int productQuantity;
     private String imgSrc;
     private String useID;
+    private String productDes;
 
     public Product() {
         // Default constructor required for Firebase deserialization
@@ -72,6 +73,14 @@ public class Product implements Parcelable {
 
     public void setUseID(String useID) {
         this.useID = useID;
+    }
+
+    public String getProductDes() {
+        return "Product Description";
+    }
+
+    public void setProductDes(String productDes) {
+        this.productDes = productDes;
     }
 
     public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product>() {

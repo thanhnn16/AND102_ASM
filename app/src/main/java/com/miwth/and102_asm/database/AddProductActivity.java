@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,8 @@ import java.util.Objects;
 public class AddProductActivity extends AppCompatActivity implements ProductDAO, UserAuth {
 
     EditText edtProductID, edtProductName, edtProductPrice, edtProductQuantity;
-    Button btnAddProduct;
+    Button btnAddProduct, btnBack;
+    ImageButton iBtnBack;
     ProductManagementFragment productManagementFragment;
     ImageView imgProduct;
     TextView tvUploadImage;
@@ -51,11 +53,12 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
                     imgProduct.setImageURI(resultUri);
                     tvUploadImage.setVisibility(View.GONE);
                 }
-            }
-            if (result.getResultCode() == RESULT_ERROR) {
-                onBackPressed();
+            } else if (result.getResultCode() == RESULT_ERROR) {
+                Toast.makeText(AddProductActivity.this, "Image cropping error", Toast.LENGTH_SHORT).show();
+            } else {
                 Toast.makeText(AddProductActivity.this, "Image cropping cancelled", Toast.LENGTH_SHORT).show();
             }
+
         }
     });
 
@@ -77,6 +80,11 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
         edtProductQuantity = findViewById(R.id.etProductQuantity);
         imgProduct = findViewById(R.id.ivProfilePicture);
         tvUploadImage = findViewById(R.id.tvUploadImage);
+
+        btnBack = findViewById(R.id.btnGoBack);
+        iBtnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(v -> finish());
+        iBtnBack.setOnClickListener(v -> finish());
 
         Intent getData = getIntent();
         if (getData != null) {
@@ -104,7 +112,7 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
             }
             if (productArrayList.size() > 0) {
                 for (int i = 0; i < productArrayList.size(); i++) {
-                    if (i >= 0 && i < productArrayList.size() && productArrayList.get(i).getProductID() == Integer.parseInt(productID)) {
+                    if (productArrayList.get(i).getProductID() == Integer.parseInt(productID)) {
                         edtProductID.setError("Product ID already exists");
                         edtProductID.requestFocus();
                         return;

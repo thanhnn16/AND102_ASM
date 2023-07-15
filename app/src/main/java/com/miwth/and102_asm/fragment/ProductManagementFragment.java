@@ -18,13 +18,15 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -43,6 +45,8 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
     ArrayList<Product> productArrayList;
     LottieAnimationView lottieAnimationView;
     SwipeRefreshLayout swipeRefreshLayout;
+    ExtendedFloatingActionButton fabAdd;
+    SearchView searchView;
 
     ActivityResultLauncher<Intent> getNewProduct = registerForActivityResult(new
                     ActivityResultContracts.StartActivityForResult(),
@@ -58,16 +62,25 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
                         }
                         Product product = intent.getParcelableExtra("product");
                         String imageUri = intent.getStringExtra("imgUri");
-                        productArrayList.add(product);
-                        productAdapter.notifyDataSetChanged();
+
                         Log.i("ProductManagement", "onActivityResult: got product");
                         assert product != null;
                         insert(product, getUID());
-                        uploadImg(Uri.parse((imageUri)), product.getProductID(),
+                        uploadProductImg(Uri.parse((imageUri)), product.getProductID(),
                                 requireActivity());
+
                         stopAnimation();
-                        swipeRefreshLayout.setRefreshing(true);
-                        new Handler().postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 500);
+                        showLoadingDialog();
+
+                        productArrayList.add(product);
+                        productAdapter.notifyDataSetChanged();
+
+                        new Handler().postDelayed(() -> {
+                            requireActivity().getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.fragment_container, new ProductManagementFragment())
+                                    .commit();
+                        }, 1400);
                     }
                 }
             });
@@ -96,14 +109,40 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
         recyclerView = view.findViewById(R.id.recyclerViewProductManagement);
 
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
+        int spanCount = 2; // Number of columns in the grid
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
+        recyclerView.setLayoutManager(gridLayoutManager);
         productAdapter = new ProductAdapter(getContext(), productArrayList);
         recyclerView.setAdapter(productAdapter);
-        FloatingActionButton fabAdd = view.findViewById(R.id.fabAddProduct);
-
+//        FloatingActionButton fabAdd = view.findViewById(R.id.fabAddProduct);
+        fabAdd = view.findViewById(R.id.fabAddProduct);
         lottieAnimationView = view.findViewById(R.id.animationViewLoading);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayoutProductManagement);
+        searchView = view.findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ArrayList<Product> filtered = new ArrayList<>();
+
+                if (newText == null || newText.length() == 0) {
+                    filtered.addAll(productArrayList);
+                } else {
+                    for (Product product : productArrayList) {
+                        if (product.getProductName().toLowerCase().contains(newText)
+                                || product.getProductDes().toLowerCase().contains(newText)) {
+                            filtered.add(product);
+                        }
+                    }
+                }
+                productAdapter.filterList(filtered);
+                return true;
+            }
+        });
 
         ValueEventListener productsValueEventListener = new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -137,8 +176,20 @@ public class ProductManagementFragment extends Fragment implements ProductDAO, U
         return view;
     }
 
+    private void showLoadingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.loading_after_update, null);
+        builder.setView(view);
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.show();
+        new Handler().postDelayed(dialog::dismiss, 1500);
+    }
+
     public void stopAnimation() {
         lottieAnimationView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
         lottieAnimationView.cancelAnimation();
     }
 }

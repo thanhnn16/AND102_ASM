@@ -13,13 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -44,26 +40,13 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
 
     ActivityResultLauncher<Intent> updateInfo = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == RESULT_OK) {
-                        ProgressBar progressBar = new ProgressBar(requireActivity());
-                        progressBar.setLayoutParams(new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT));
-                        progressBar.setVisibility(View.VISIBLE);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                requireActivity().getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .replace(R.id.fragment_container, new AccountFragment())
-                                        .commit();
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        }, 1000);
-                    }
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    showLoadingDialog();
+                    new Handler().postDelayed(() -> requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new AccountFragment())
+                            .commit(), 1400);
                 }
             }
     );
@@ -101,40 +84,40 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
             }
         }
 
-        btnProfileDetail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogUpdateProfile();
-            }
-        });
+        btnProfileDetail.setOnClickListener(v -> DialogUpdateProfile());
 
-        btnEditProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateInfo.launch(new Intent(requireActivity(), UpdateAccountInfo.class));
-            }
-        });
+        btnEditProfile.setOnClickListener(v -> updateInfo.launch(new Intent(requireActivity(), UpdateAccountInfo.class)));
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnLogout.setOnClickListener(v -> {
 //                build new confirm dialog to confirm log out
-                Log.i("logout", "logout");
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            builder.setTitle("Logout");
+            builder.setIcon(R.drawable.log_out);
+            builder.setMessage("Are you sure you want to logout?");
+            builder.setPositiveButton("Yes", (dialog, which) -> {
                 logout();
+                startActivity(new Intent(requireActivity(), LoginActivity.class));
+                SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("login_state", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();
-                startActivity(new Intent(requireActivity(), LoginActivity.class));
                 requireActivity().finishAffinity();
-            }
+            });
+            builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         });
 
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().finishAffinity();
-            }
+        btnExit.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            builder.setTitle("Exit");
+            builder.setIcon(R.drawable.exit_app);
+            builder.setMessage("Are you sure you want to exit?");
+            builder.setPositiveButton("Yes", (dialog, which) -> requireActivity().finishAffinity());
+            builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         });
-
         return view;
     }
 
@@ -184,13 +167,19 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
 
         ImageButton btnClose = view.findViewById(R.id.btnClose);
 
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        btnClose.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
+    }
+
+    private void showLoadingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.loading_after_update, null);
+        builder.setView(view);
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.show();
+        new Handler().postDelayed(dialog::dismiss, 1500);
     }
 }

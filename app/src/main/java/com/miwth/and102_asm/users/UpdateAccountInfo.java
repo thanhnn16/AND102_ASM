@@ -54,9 +54,9 @@ public class UpdateAccountInfo extends AppCompatActivity implements UserAuth {
                     ivProfilePicture.setImageURI(resultUri);
                     tvUploadImage.setVisibility(View.GONE);
                 }
-            }
-            if (result.getResultCode() == RESULT_ERROR) {
-                onBackPressed();
+            } else if (result.getResultCode() == RESULT_ERROR) {
+                Toast.makeText(UpdateAccountInfo.this, "Image cropping error", Toast.LENGTH_SHORT).show();
+            } else {
                 Toast.makeText(UpdateAccountInfo.this, "Image cropping cancelled", Toast.LENGTH_SHORT).show();
             }
         }

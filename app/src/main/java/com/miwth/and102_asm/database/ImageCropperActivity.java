@@ -53,13 +53,12 @@ public class ImageCropperActivity extends AppCompatActivity {
                 setResult(RESULT_OK, intent);
                 finish();
             }
-        } else if (resultCode == RESULT_ERROR) {
-            if (data != null) {
-                setResult(RESULT_ERROR);
-                finish();
-                Throwable error = UCrop.getError(data);
-                error.printStackTrace();
-            }
+        } else if (resultCode == RESULT_ERROR && requestCode == UCrop.REQUEST_CROP) {
+            setResult(RESULT_ERROR);
+            finish();
+        } else {
+            setResult(RESULT_CANCELED);
+            finish();
         }
     }
 
@@ -72,7 +71,9 @@ public class ImageCropperActivity extends AppCompatActivity {
             OutputStream outputStream = Files.newOutputStream(destFile.toPath());
             byte[] buffer = new byte[1024];
             int length;
-            while ((length = inputStream.read(buffer)) != -1) {
+            while (true) {
+                assert inputStream != null;
+                if ((length = inputStream.read(buffer)) == -1) break;
                 outputStream.write(buffer, 0, length);
             }
             outputStream.close();

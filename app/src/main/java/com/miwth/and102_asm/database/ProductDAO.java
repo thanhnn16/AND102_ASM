@@ -30,7 +30,9 @@ public interface ProductDAO {
         mDatabase.child(userId).child(String.valueOf(product.getProductID())).setValue(product);
     }
 
-    default void uploadImg(Uri imgUri, int productID, Context context) {
+    default void uploadProductImg(Uri imgUri, int productID, Context context) {
+//        productImagesRef.child(String.valueOf(productID)).putFile(imgUri);
+
 //        compress image before upload to firebase
         InputStream inputStream;
         try {
@@ -40,7 +42,7 @@ public interface ProductDAO {
                 Log.e("Error", "Failed to decode image file: " + imgUri);
             }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 90, baos);
             bitmapImage.recycle();
 
             File outputFile = new File(context.getCacheDir(), "temp");
@@ -59,6 +61,7 @@ public interface ProductDAO {
         } catch (FileNotFoundException e) {
             Log.e("Error", "File not found: " + e.getMessage());
         }
+
     }
 
     default void uploadAvatar(Uri imgUri, String userId, Context context) {
@@ -71,5 +74,6 @@ public interface ProductDAO {
 
     default void delete(Product product, String uid) {
         mDatabase.child(uid).child(String.valueOf(product.getProductID())).removeValue();
+        productImagesRef.child(String.valueOf(product.getProductID())).delete();
     }
 }

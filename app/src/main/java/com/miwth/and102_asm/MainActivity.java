@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -14,17 +15,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.miwth.and102_asm.fragment.AboutMeFragment;
 import com.miwth.and102_asm.fragment.AccountFragment;
 import com.miwth.and102_asm.fragment.ProductManagementFragment;
 import com.miwth.and102_asm.fragment.SettingsFragment;
+import com.miwth.and102_asm.fragment.YoutubeFragment;
 import com.miwth.and102_asm.users.LoginActivity;
 import com.miwth.and102_asm.users.UserAuth;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements UserAuth {
     Toolbar toolbar;
@@ -32,22 +38,20 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
     DrawerLayout drawerLayout;
     TextView toolbarTitle;
     GoogleSignInClient mGoogleSignInClient;
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getWindow().setStatusBarColor(getResources().getColor(R.color.btn_login_disabled, getTheme()));
-
         toolbar = findViewById(R.id.toolbar);
         toolbarTitle = findViewById(R.id.toolbar_title);
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail().build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
         toggle.syncState();
         drawerLayout.addDrawerListener(toggle);
 
-        Fragment defaultFragment = new AccountFragment();
+        Fragment defaultFragment = new ProductManagementFragment();
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, defaultFragment)
@@ -133,6 +137,51 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
             }
         });
 
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                Fragment fragment = fragmentManager.findFragmentByTag(String.valueOf(itemId));
 
+                if (fragment == null) {
+                    // Nếu fragment chưa tồn tại trong back stack, tạo mới và thêm vào stack
+                    if (itemId == R.id.product_management) {
+                        fragment = new ProductManagementFragment();
+                    } else if (itemId == R.id.youtube) {
+                        fragment = new YoutubeFragment();
+                    } else if (itemId == R.id.contact) {
+                        fragment = new AboutMeFragment();
+                    } else if (itemId == R.id.account_management) {
+                        fragment = new AccountFragment();
+                    } else {
+                        fragment = new SettingsFragment();
+                    }
+                    fragmentTransaction.add(R.id.fragment_container, fragment, String.valueOf(itemId));
+                } else {
+                    // Nếu fragment đã tồn tại trong back stack, chỉ hiển thị lại
+                    fragmentTransaction.show(fragment);
+                }
+
+                // Ẩn các fragment khác (nếu có)
+                List<Fragment> fragments = fragmentManager.getFragments();
+                for (Fragment frag : fragments) {
+                    if (frag != fragment) {
+                        fragmentTransaction.hide(frag);
+                    }
+                }
+
+                fragmentTransaction.commit();
+                return true;
+            }
+        });
+
+        bottomNavigationView.setOnItemReselectedListener(new NavigationBarView.OnItemReselectedListener() {
+            @Override
+            public void onNavigationItemReselected(@NonNull MenuItem item) {
+                Toast.makeText(MainActivity.this, "Reselected", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

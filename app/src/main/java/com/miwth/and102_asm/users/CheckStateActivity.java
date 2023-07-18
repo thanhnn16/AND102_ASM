@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.miwth.and102_asm.MainActivity;
 import com.miwth.and102_asm.R;
+import com.miwth.and102_asm.welcome.LoginSignupScreen;
 
 public class CheckStateActivity extends AppCompatActivity implements UserAuth {
     final int SPLASH_SCREEN_TIME = 2100;
@@ -61,7 +62,7 @@ public class CheckStateActivity extends AppCompatActivity implements UserAuth {
     }
 
     private void startLoginActivity() {
-        startActivity(new Intent(CheckStateActivity.this, LoginActivity.class));
+        startActivity(new Intent(CheckStateActivity.this, LoginSignupScreen.class));
         finishAffinity();
     }
 }

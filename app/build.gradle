@@ -12,7 +12,7 @@ android {
         minSdk 28
         targetSdk 33
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,7 +38,7 @@ dependencies {
     implementation libs.material
     implementation libs.constraintlayout
     //noinspection GradlePath
-    implementation files('C:/Users/Admin/Desktop/ucrop-2.2.8.aar')
+    implementation files('D:/Android/ucrop-2.2.8.aar')
     testImplementation libs.junit
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.espresso.core
@@ -55,5 +55,5 @@ dependencies {
     implementation libs.glide
     implementation libs.androidx.swiperefreshlayout
     implementation libs.material
-
+    implementation libs.fab
 }

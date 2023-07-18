@@ -6,8 +6,11 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -21,6 +24,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AND102_ASM"
         tools:targetApi="31">
+        <activity
+            android:name=".welcome.LoginSignupScreen"
+            android:exported="false" />
+        <activity
+            android:name=".welcome.OnboardingActivity"
+            android:exported="false" />
         <activity
             android:name=".users.UpdateAccountInfo"
             android:exported="false" />
@@ -48,7 +57,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".users.CheckStateActivity"
             android:exported="true"

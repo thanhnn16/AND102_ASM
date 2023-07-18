@@ -55,6 +55,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
+
         ImageView ivProfile = view.findViewById(R.id.imageView_profile);
         TextView tvName = view.findViewById(R.id.userName);
 

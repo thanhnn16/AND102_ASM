@@ -7,35 +7,24 @@
     android:background="@color/white"
     tools:context=".fragment.ProductManagementFragment">
 
-    <!--<com.google.android.material.search.SearchView
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_width="match_parent"
-        app:useDrawerArrowDrawable="true"
-        android:layout_height="50dp"
-        android:hint="@string/search"
-        android:layout_margin="16dp"
-        android:background="@color/btn_login_disabled"
-        android:id="@+id/search_view"/>-->
-
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bottom_nav_bg" />
-
     <com.airbnb.lottie.LottieAnimationView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/loading_potato"
         android:id="@+id/animationViewLoading" />
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/search_view_bg"
+        app:defaultQueryHint="Search..."
+        app:iconifiedByDefault="false"
+        app:searchIcon="@drawable/search" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayoutProductManagement"
@@ -43,14 +32,17 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/search_view"
         android:layout_alignParentBottom="true"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewProductManagement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabAddProduct"

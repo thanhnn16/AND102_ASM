@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -36,7 +35,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public ProductAdapter(Context context, ArrayList<Product> productArrayList) {
         this.context = context;
         this.productArrayList = productArrayList;
-        filteredList = new ArrayList<>();
+        filteredList = new ArrayList<>(productArrayList);
     }
 
     @NonNull
@@ -53,7 +52,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Product product = productArrayList.get(position);
         holder.productName.setText(product.getProductName());
         holder.productPrice.setText(product.getProductPrice() + "$");
-        holder.productQuantity.setText("Qty: " + product.getProductQuantity());
         String imgURI = productArrayList.get(position).getImgSrc();
         String productID = String.valueOf(productArrayList.get(position).getProductID());
         if (imgURI != null) {
@@ -76,17 +74,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 Log.e("Error", Objects.requireNonNull(exception.getMessage()));
             });
         }
-
-        holder.btnEdit.setOnClickListener(v -> Toast.makeText(v.getContext(), "Edit", Toast.LENGTH_SHORT).show());
-
-        holder.btnDelete.setOnClickListener(v -> {
-            Toast.makeText(v.getContext(), "Deleting " + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
-            delete(productArrayList.get(holder.getAdapterPosition()), getUID());
-            showLoadingDialog();
-            productArrayList.remove(holder.getAdapterPosition());
-        });
-
-        holder.btnSeeMore.setOnClickListener(v -> showMoreDiaglog(position));
     }
 
     @SuppressLint("SetTextI18n")
@@ -159,19 +146,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView productName, productPrice, productQuantity;
-        ImageButton btnEdit, btnDelete, btnSeeMore;
+        TextView productName, productPrice;
         ImageView iv_product_image;
 
         public ViewHolder(View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.tv_product_name);
             productPrice = itemView.findViewById(R.id.tv_product_price);
-            productQuantity = itemView.findViewById(R.id.tv_product_quantity);
-            btnEdit = itemView.findViewById(R.id.btn_edit_product);
-            btnDelete = itemView.findViewById(R.id.btn_delete_product);
             iv_product_image = itemView.findViewById(R.id.iv_product_image);
-            btnSeeMore = itemView.findViewById(R.id.btn_see_more);
         }
     }
 }

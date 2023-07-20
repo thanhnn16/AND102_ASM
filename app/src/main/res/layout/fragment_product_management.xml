@@ -50,8 +50,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="6dp"
         android:backgroundTint="@color/btn_login"
         android:contentDescription="@string/add_product"
         android:drawableLeft="@drawable/baseline_add_24"
@@ -59,7 +59,6 @@
         android:drawableTint="@color/white"
         android:text="@string/add_product"
         android:textColor="@color/white"
-        android:textSize="12sp"
         tools:ignore="RelativeOverlap,RtlHardcoded" />
 
 </RelativeLayout>

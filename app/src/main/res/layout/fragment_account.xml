@@ -1,23 +1,22 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/white"
     tools:context=".fragment.AccountFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageView_profile"
             android:layout_width="113dp"
             android:layout_height="115dp"
-            android:layout_marginTop="32dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/profile_picture"
             android:scaleType="centerCrop"
@@ -31,7 +30,6 @@
             android:id="@+id/tvWelcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             android:text="@string/welcome_back"
             android:textSize="18sp"
@@ -43,7 +41,7 @@
             android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username"
+            android:text="@string/username"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +63,7 @@
             android:id="@+id/firstRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="32dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="16dp"
             android:gravity="center"
             android:orientation="vertical"
@@ -79,8 +77,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginVertical="8dp"
-                android:background="@drawable/product_item_list_bg"
-                android:backgroundTint="@color/btn_login_disabled"
+                android:background="@drawable/search_view_bg"
+                android:backgroundTint="@color/gray_light"
                 android:padding="8dp">
 
                 <ImageView
@@ -100,7 +98,8 @@
                     android:layout_marginEnd="8dp"
                     android:layout_toEndOf="@id/imageView_profile_info"
                     android:text="@string/account_information"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    tools:ignore="RelativeOverlap" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -108,6 +107,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/baseline_arrow_forward_ios_24" />
 
             </RelativeLayout>
@@ -118,8 +118,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginVertical="8dp"
-                android:background="@drawable/product_item_list_bg"
-                android:backgroundTint="@color/btn_login_disabled"
+                android:background="@drawable/search_view_bg"
+                android:backgroundTint="@color/gray_light"
                 android:padding="8dp">
 
                 <ImageView
@@ -138,7 +138,8 @@
                     android:layout_marginEnd="8dp"
                     android:layout_toEndOf="@id/imageView_profile_update"
                     android:text="@string/update_info"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    tools:ignore="RelativeOverlap" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -146,6 +147,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/baseline_arrow_forward_ios_24" />
 
             </RelativeLayout>
@@ -156,8 +158,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginVertical="8dp"
-                android:background="@drawable/product_item_list_bg"
-                android:backgroundTint="@color/btn_login_disabled"
+                android:background="@drawable/search_view_bg"
+                android:backgroundTint="@color/gray_light"
                 android:padding="8dp">
 
                 <ImageView
@@ -176,7 +178,8 @@
                     android:layout_marginEnd="8dp"
                     android:layout_toEndOf="@id/imageView_change_pw"
                     android:text="@string/change_password"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    tools:ignore="RelativeOverlap" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -184,6 +187,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/baseline_arrow_forward_ios_24" />
 
             </RelativeLayout>
@@ -194,8 +198,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginVertical="8dp"
-                android:background="@drawable/product_item_list_bg"
-                android:backgroundTint="@color/btn_login_disabled"
+                android:background="@drawable/search_view_bg"
+                android:backgroundTint="@color/gray_light"
                 android:padding="8dp">
 
                 <ImageView
@@ -214,7 +218,8 @@
                     android:layout_marginEnd="8dp"
                     android:layout_toEndOf="@id/imageView_logout"
                     android:text="@string/logout"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    tools:ignore="RelativeOverlap" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -222,6 +227,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/baseline_arrow_forward_ios_24" />
 
             </RelativeLayout>
@@ -232,8 +238,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginVertical="8dp"
-                android:background="@drawable/product_item_list_bg"
-                android:backgroundTint="@color/btn_login_disabled"
+                android:background="@drawable/search_view_bg"
+                android:backgroundTint="@color/gray_light"
                 android:padding="8dp">
 
                 <ImageView
@@ -252,7 +258,8 @@
                     android:layout_marginEnd="8dp"
                     android:layout_toEndOf="@id/imageView_exit_app"
                     android:text="@string/exit_app"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    tools:ignore="RelativeOverlap" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -260,10 +267,9 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/baseline_arrow_forward_ios_24" />
-
             </RelativeLayout>
-
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+</ScrollView>

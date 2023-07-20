@@ -55,5 +55,5 @@ dependencies {
     implementation libs.glide
     implementation libs.androidx.swiperefreshlayout
     implementation libs.material
-    implementation libs.fab
+
 }

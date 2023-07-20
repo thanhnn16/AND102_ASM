@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "588726428165",
+    "firebase_url": "https://and102-asm-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "and102-asm",
     "storage_bucket": "and102-asm.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "588726428165-2sdupcc0dv2js1jt971h9e119ffl22eg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.miwth.and102_asm",
+            "certificate_hash": "6dbd1a477ba4f63affd377e78132adee57aeb4d3"
+          }
+        },
         {
           "client_id": "588726428165-c7c3mkurtejt9e67gnqqoquaba0e5o9q.apps.googleusercontent.com",
           "client_type": 1,

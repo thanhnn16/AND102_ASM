@@ -7,74 +7,69 @@
     tools:context=".users.PhoneLogin">
 
     <ImageView
-        android:id="@+id/imageView_bg"
+        android:id="@+id/ivLogo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="150dp"
+        android:layout_marginHorizontal="64dp"
+        android:contentDescription="@string/logo"
         app:layout_constraintEnd_toEndOf="parent"
-        android:scaleType="fitXY"
-        android:src="@drawable/img_2"
-        android:contentDescription="Background image" />
+        android:src="@drawable/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvGoBack" />
 
     <TextView
         android:id="@+id/tvWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phone Login"
-        android:textSize="32sp"
+        android:layout_marginStart="32dp"
+        android:text="@string/phone_number_comma"
+        android:textColor="@color/black"
+        android:textSize="28sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvGoBack" />
+        app:layout_constraintTop_toBottomOf="@id/ivLogo" />
 
     <TextView
         android:id="@+id/tvWelcome2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Please enter your phone number\nto continue."
-        android:textAlignment="center"
-        android:textSize="24sp"
+        android:layout_marginHorizontal="32dp"
+        android:text="@string/please_enter_your_phone_number_to_continue"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/tvWelcome"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/edtPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Phone Number"
+        android:layout_marginHorizontal="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvWelcome2"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
+        android:autofillHints="phone"
         android:inputType="phone"
         android:textSize="24sp"
         android:maxLength="10"
-        android:autofillHints="null"
+        android:drawablePadding="8dp"
         android:drawableStart="@drawable/baseline_perm_phone_msg_24"
         android:drawableTint="@color/dark_gray"
-        android:drawablePadding="10dp"
-        />
-
+        android:hint="@string/phone_number" />
 
     <Button
         android:id="@+id/btnSend"
-        android:layout_width="250dp"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
-        android:text="Send"
+        android:backgroundTint="@color/send_bg_enable"
         app:layout_constraintTop_toBottomOf="@id/edtPhone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/white"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="@color/btn_login"
-        app:cornerRadius="10dp"
+        android:text="@string/send"
+        android:textColor="@color/send_enable"
         android:textSize="24sp"
-        />
+        app:cornerRadius="8dp" />
 
     <TextView
         android:id="@+id/tvEnterOtp"
@@ -85,7 +80,7 @@
         app:layout_constraintTop_toBottomOf="@id/btnSend"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         />
 
 
@@ -93,13 +88,13 @@
         android:id="@+id/edtCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Code"
+        android:layout_marginHorizontal="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvEnterOtp"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="20dp"
-        android:inputType="phone"
+        android:layout_marginTop="8dp"
+        android:hint="@string/enter_code"
+        android:inputType="number"
         android:textSize="24sp"
         android:maxLength="6"
         android:enabled="false"
@@ -112,28 +107,28 @@
         android:id="@+id/btnVerify"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="Verify"
+        android:backgroundTint="@color/send_bg_disable"
         app:layout_constraintTop_toBottomOf="@id/edtCode"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/gray_light"
+        android:text="@string/verify"
         android:layout_marginTop="10dp"
-        android:backgroundTint="@color/btn_login_disabled"
-        app:cornerRadius="10dp"
+        android:textColor="@color/send_disable"
+        app:cornerRadius="8dp"
         android:textSize="24sp"
         android:clickable="false"
         android:enabled="false" />
 
     <ImageButton
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="20dp"
+        android:id="@+id/tvGoBack"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@android:color/transparent"
         android:contentDescription="@string/go_back"
-        android:id="@+id/tvGoBack"
         android:src="@drawable/baseline_arrow_back_ios_new_24"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.airbnb.lottie.LottieAnimationView

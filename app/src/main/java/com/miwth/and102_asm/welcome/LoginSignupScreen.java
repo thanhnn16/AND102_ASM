@@ -42,15 +42,13 @@ public class LoginSignupScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginSignupScreen.this, LoginActivity.class));
-                finishAffinity();
             }
         });
 
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginSignupScreen.this, LoginActivity.class));
-                finishAffinity();
+                startActivity(new Intent(LoginSignupScreen.this, OnboardingActivity.class));
             }
         });
 

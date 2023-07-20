@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:background="@drawable/product_item_list_bg"
@@ -11,6 +11,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:padding="10dp">
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -32,7 +34,7 @@
             android:layout_height="wrap_content"
             android:text="@string/product_name"
             android:textColor="@color/btn_login"
-            android:textSize="28sp"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_product_image" />
@@ -43,7 +45,7 @@
             android:layout_height="wrap_content"
             android:text="@string/dollar"
             android:textColor="@color/btn_login_disabled"
-            android:textSize="20sp"
+            android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@+id/iv_product_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,12 +55,12 @@
             android:id="@+id/tv_product_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/product_description"
+            android:text="@string/see_more_dot"
             android:textColor="@color/btn_login_disabled"
             android:layout_marginStart="6dp"
             android:textSize="16sp"
             android:textStyle="italic"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_product_price" />
 
 

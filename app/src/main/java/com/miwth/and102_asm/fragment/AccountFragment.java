@@ -26,9 +26,9 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseUser;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.database.ProductDAO;
-import com.miwth.and102_asm.users.LoginActivity;
 import com.miwth.and102_asm.users.UpdateAccountInfo;
 import com.miwth.and102_asm.users.UserAuth;
+import com.miwth.and102_asm.welcome.LoginSignupScreen;
 
 import java.util.Objects;
 
@@ -97,7 +97,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
             builder.setMessage("Are you sure you want to logout?");
             builder.setPositiveButton("Yes", (dialog, which) -> {
                 logout();
-                startActivity(new Intent(requireActivity(), LoginActivity.class));
+                startActivity(new Intent(requireActivity(), LoginSignupScreen.class));
                 SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("login_state", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();

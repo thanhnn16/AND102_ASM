@@ -25,6 +25,18 @@
         android:theme="@style/Theme.AND102_ASM"
         tools:targetApi="31">
         <activity
+            android:name=".users.ChangeUserPictureActivity"
+            android:exported="false" />
+        <activity
+            android:name=".users.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".welcome.GetStarted"
+            android:exported="false" />
+        <activity
+            android:name=".database.ProductDetail"
+            android:exported="false" />
+        <activity
             android:name=".welcome.LoginSignupScreen"
             android:exported="false" />
         <activity

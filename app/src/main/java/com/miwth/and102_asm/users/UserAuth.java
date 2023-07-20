@@ -20,6 +20,7 @@ public interface UserAuth {
     DatabaseReference infoDB = FirebaseDatabase.getInstance("https://and102-asm-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference()
             .child("user_info");
+
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     default boolean isUserLoggedIn() {
@@ -27,7 +28,11 @@ public interface UserAuth {
     }
 
     default String getUID() {
-        return (mAuth.getCurrentUser()).getUid();
+        if (mAuth.getCurrentUser() == null) {
+            return "uid_null";
+        } else {
+            return (mAuth.getCurrentUser()).getUid();
+        }
     }
 
     default String getUserEmail() {
@@ -97,6 +102,20 @@ public interface UserAuth {
                             Log.d("TAG", "User profile updated.");
                             Toast.makeText(context, "User profile updated.", Toast.LENGTH_SHORT).show();
                         }
+                    }
+                });
+    }
+
+    default void uploadAvatar(Uri imgUri, FirebaseUser user) {
+        UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(imgUri)
+                .build();
+        user.updateProfile(profileChangeRequest)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("TAG", "User profile updated.");
+                    } else {
+                        Log.d("TAG", "User profile update failed.");
                     }
                 });
     }

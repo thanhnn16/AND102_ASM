@@ -64,9 +64,6 @@ public interface ProductDAO {
 
     }
 
-    default void uploadAvatar(Uri imgUri, String userId, Context context) {
-        avatarImagesRef.child(String.valueOf(userId)).putFile(imgUri);
-    }
 
     default void update(Product product, String uid) {
         mDatabase.child(uid).child(String.valueOf(product.getProductID())).setValue(product);

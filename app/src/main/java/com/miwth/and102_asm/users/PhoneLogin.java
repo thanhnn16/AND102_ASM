@@ -22,7 +22,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.miwth.and102_asm.MainActivity;
 import com.miwth.and102_asm.R;
 
@@ -35,6 +38,7 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
     Button btnSend, btnVerify;
     ImageButton tvGoBack;
     LottieAnimationView lottieAnimationView;
+    private boolean isPhoneNumberExists = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,21 +57,29 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
         tvGoBack.setOnClickListener(v -> finish());
         btnSend.setOnClickListener(v -> {
             String phone = edtPhone.getText().toString();
+
             if (phone.isEmpty()) {
                 edtPhone.setError("Please enter your phone number");
                 edtPhone.requestFocus();
             } else if (phone.length() < 9) {
                 edtPhone.setError("Please enter a valid phone number");
                 edtPhone.requestFocus();
+            } else if (checkForPhoneNumber(phone)) {
+                Log.i("PhoneLogin", "onCreate: " + isPhoneNumberExists);
+                Log.i("PhoneLogin", "onCreate: " + phone);
+                edtPhone.setError("This phone number is already registered");
+                edtPhone.requestFocus();
+
             } else {
                 edtCode.setError(null);
-                btnVerify.setEnabled(true);
                 edtCode.setEnabled(true);
                 edtCode.requestFocus();
-                btnVerify.setBackgroundColor(getResources().getColor(R.color.btn_login, null));
-                btnVerify.setTextColor(getResources().getColor(R.color.white, null));
+
+                btnVerify.setEnabled(true);
+                btnVerify.setBackgroundColor(getResources().getColor(R.color.send_bg_enable, null));
+                btnVerify.setTextColor(getResources().getColor(R.color.send_enable, null));
+
                 startPhoneNumberVerification(phone);
-//                countDown();
                 ResendOtpCountDown countDownTimer = new ResendOtpCountDown(60000, 1000);
                 countDownTimer.start();
             }
@@ -93,23 +105,19 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
             public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
                 // Sign in with the credential
                 // ...
+                signInWithPhoneAuthCredential(credential);
                 edtCode.setText(credential.getSmsCode());
             }
 
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
-
                 Toast.makeText(PhoneLogin.this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCodeSent(@NonNull String verificationId,
                                    @NonNull PhoneAuthProvider.ForceResendingToken token) {
-                // Save the verification id somewhere
                 mVerificationId = verificationId;
-                // The corresponding whitelisted code above should be used to complete sign-in.
-                // PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
-                // ...
             }
         };
     }
@@ -135,23 +143,18 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Sign in success
-                        Toast.makeText(this, "Logged in with OTP", Toast.LENGTH_SHORT).show();
-                        Intent newIntent = new Intent(PhoneLogin.this, MainActivity.class);
-                        FirebaseUser user = task.getResult().getUser();
-                        assert user != null;
-                        if (user.getDisplayName() == null) {
-                            UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(edtPhone.getText().toString()).build();
-
-                            user.updateProfile(profileChangeRequest).addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    Log.d("TAG", "User profile updated.");
-                                }
-                            });
+                        if (task.getResult().getUser() != null) {
+                            // Sign in success
+                            Toast.makeText(this, "Phone number verified", Toast.LENGTH_SHORT).show();
+                            String phoneNumber = edtPhone.getText().toString();
+                            DatabaseReference ref = infoDB.child("phone");
+                            ref.child(phoneNumber).setValue(phoneNumber);
+                            Intent newIntent = new Intent(PhoneLogin.this, MainActivity.class);
+                            FirebaseUser user = task.getResult().getUser();
+                            mAuth.updateCurrentUser(user);
+                            startActivity(newIntent);
+                            finishAffinity();
                         }
-                        startActivity(newIntent);
-                        finishAffinity();
                     } else {
                         if (task.getException() != null)
                             Toast.makeText(this, "Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -203,6 +206,20 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
         btnVerify.setText("Verify");
     }
 
+    private boolean checkForPhoneNumber(String number) {
+        infoDB.orderByChild("phone").equalTo(number).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                isPhoneNumberExists = dataSnapshot.exists();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+        return isPhoneNumberExists;
+    }
+
     public class ResendOtpCountDown extends CountDownTimer {
 
         public ResendOtpCountDown(long millisInFuture, long countDownInterval) {
@@ -213,16 +230,17 @@ public class PhoneLogin extends AppCompatActivity implements UserAuth {
         public void onTick(long millisUntilFinished) {
             long seconds = millisUntilFinished / 1000;
             btnSend.setText(getString(R.string.resend_otp_in) + seconds + getString(R.string.s_second));
-            btnSend.setBackgroundColor(getResources().getColor(R.color.gray_light, null));
+            btnSend.setBackgroundColor(getResources().getColor(R.color.send_bg_disable, getTheme()));
+            btnSend.setTextColor(getResources().getColor(R.color.send_disable, getTheme()));
             btnSend.setEnabled(false);
         }
 
         @Override
         public void onFinish() {
             btnSend.setText(R.string.resend_otp);
-            btnSend.setBackgroundColor(getResources().getColor(R.color.btn_login, null));
+            btnSend.setBackgroundColor(getResources().getColor(R.color.send_bg_enable, getTheme()));
+            btnSend.setTextColor(getResources().getColor(R.color.send_enable, getTheme()));
             btnSend.setEnabled(true);
         }
     }
-
 }

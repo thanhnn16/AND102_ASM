@@ -64,9 +64,13 @@ public class UpdateAccountInfo extends AppCompatActivity implements UserAuth {
 
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
             ActivityResultContracts.GetContent(), result -> {
-        Intent intent = new Intent(UpdateAccountInfo.this, ImageCropperActivity.class);
-        intent.putExtra("stockImgUrl", result.toString());
-        getCroppedImage.launch(intent);
+        if (result != null) {
+            Intent intent = new Intent(UpdateAccountInfo.this, ImageCropperActivity.class);
+            intent.putExtra("stockImgUrl", result.toString());
+            getCroppedImage.launch(intent);
+        } else {
+            Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
+        }
     });
 
     @Override

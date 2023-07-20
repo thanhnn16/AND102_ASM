@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
@@ -27,8 +26,8 @@ import com.miwth.and102_asm.fragment.AccountFragment;
 import com.miwth.and102_asm.fragment.ProductManagementFragment;
 import com.miwth.and102_asm.fragment.SettingsFragment;
 import com.miwth.and102_asm.fragment.YoutubeFragment;
-import com.miwth.and102_asm.users.LoginActivity;
 import com.miwth.and102_asm.users.UserAuth;
+import com.miwth.and102_asm.welcome.LoginSignupScreen;
 
 import java.util.List;
 
@@ -37,8 +36,8 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     TextView toolbarTitle;
-    GoogleSignInClient mGoogleSignInClient;
     BottomNavigationView bottomNavigationView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 MainActivity.this, drawerLayout, toolbar, R.string.open, R.string.close);
         toggle.setDrawerIndicatorEnabled(true);
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.btn_login, getTheme()));
         toggle.syncState();
         drawerLayout.addDrawerListener(toggle);
 
@@ -76,19 +76,7 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
                 Fragment selectedFragment = null;
 
                 int itemId = item.getItemId();
-                if (itemId == R.id.nav_account) {
-                    selectedFragment = new AccountFragment();
-                    toolbarTitle.setText("Account");
-
-                } else if (itemId == R.id.nav_prod_mgmt) {
-                    selectedFragment = new ProductManagementFragment();
-                    toolbarTitle.setText("Products Management");
-
-                } else if (itemId == R.id.nav_about) {
-                    selectedFragment = new AboutMeFragment();
-                    toolbarTitle.setText("About Me");
-
-                } else if (itemId == R.id.nav_settings) {
+                if (itemId == R.id.nav_settings) {
                     selectedFragment = new SettingsFragment();
                     toolbarTitle.setText("Settings");
 
@@ -112,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
                     builder.setMessage("Are you sure you want to logout?");
                     builder.setPositiveButton("Yes", (dialog, which) -> {
                         logout();
-                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        startActivity(new Intent(MainActivity.this, LoginSignupScreen.class));
                         SharedPreferences sharedPreferences = getSharedPreferences("login_state", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
@@ -184,4 +172,6 @@ public class MainActivity extends AppCompatActivity implements UserAuth {
             }
         });
     }
+
+
 }

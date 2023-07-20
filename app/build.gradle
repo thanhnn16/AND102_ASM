@@ -55,5 +55,7 @@ dependencies {
     implementation libs.glide
     implementation libs.androidx.swiperefreshlayout
     implementation libs.material
-    implementation libs.fab
+    //noinspection GradlePath
+    implementation files('D:/Android/imageslideshow-0.1.2.aar')
+    implementation libs.picasso
 }

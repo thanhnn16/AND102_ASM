@@ -3,6 +3,7 @@ package com.miwth.and102_asm.fragment;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -26,11 +27,9 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseUser;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.database.ProductDAO;
-import com.miwth.and102_asm.users.LoginActivity;
 import com.miwth.and102_asm.users.UpdateAccountInfo;
 import com.miwth.and102_asm.users.UserAuth;
-
-import java.util.Objects;
+import com.miwth.and102_asm.welcome.LoginSignupScreen;
 
 public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
     SharedPreferences sharedPreferences;
@@ -51,6 +50,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
             }
     );
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,6 +58,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
 
         ImageView ivProfile = view.findViewById(R.id.imageView_profile);
         TextView tvName = view.findViewById(R.id.userName);
+        TextView tvEmail = view.findViewById(R.id.userEmail);
 
         sharedPreferences = requireActivity().getSharedPreferences("login_state", MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -70,18 +71,24 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
 
         user = mAuth.getCurrentUser();
         if (user != null) {
-            if (user.getDisplayName() == null && user.getEmail() == null) {
-                String phoneNumber = sharedPreferences.getString("phoneNumber", "");
-                tvName.setText(phoneNumber);
-            } else if (user.getDisplayName() == null && user.getEmail() != null) {
-                tvName.setText(user.getEmail());
+            if (user.getDisplayName() == null) {
+                tvName.setText("Hello User");
             } else {
                 tvName.setText(user.getDisplayName());
+                tvEmail.setText(user.getEmail());
             }
             if (user.getPhotoUrl() != null) {
-                String photoUrlString = Objects.requireNonNull(user.getPhotoUrl()).toString();
-                Glide.with(this).load(photoUrlString).fitCenter().into(ivProfile);
-                Log.i("photoUrl", photoUrlString);
+                Glide.with(this).load(user.getPhotoUrl()).fitCenter().into(ivProfile);
+                Log.i("photoUrl", user.getPhotoUrl().toString());
+            } else if (avatarImagesRef.child(getUID()).getPath().isEmpty()) {
+                Log.i("photoUrl", "No photo");
+                Glide.with(requireActivity())
+                        .load(avatarImagesRef.child(getUID()))
+                        .into(ivProfile);
+            } else {
+                Glide.with(requireActivity())
+                        .load(R.drawable.account)
+                        .into(ivProfile);
             }
         }
 
@@ -97,7 +104,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
             builder.setMessage("Are you sure you want to logout?");
             builder.setPositiveButton("Yes", (dialog, which) -> {
                 logout();
-                startActivity(new Intent(requireActivity(), LoginActivity.class));
+                startActivity(new Intent(requireActivity(), LoginSignupScreen.class));
                 SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("login_state", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
@@ -134,21 +141,29 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
         TextView tvBirthday = view.findViewById(R.id.tvBirthday);
         TextView tvBio = view.findViewById(R.id.tvBio);
 
-        if (user.getPhotoUrl() != null) {
-            String photoUrlString = Objects.requireNonNull(user.getPhotoUrl()).toString();
-            Glide.with(this).load(photoUrlString).fitCenter().into(ivUpload);
-            Log.i("photoUrl", photoUrlString);
+
+        if (user.getDisplayName() == null) {
+            tvDisplayName.setText("Hello User");
         } else {
+            tvDisplayName.setText(user.getDisplayName());
+        }
+        if (user.getPhotoUrl() != null) {
+            Glide.with(this).load(user.getPhotoUrl()).fitCenter().into(ivUpload);
+            Log.i("photoUrl", user.getPhotoUrl().toString());
+        } else if (avatarImagesRef.child(getUID()).getPath().isEmpty()) {
+            Log.i("photoUrl", "No photo");
             Glide.with(requireActivity())
                     .load(avatarImagesRef.child(getUID()))
+                    .fitCenter()
+                    .into(ivUpload);
+        } else {
+            Glide.with(requireActivity())
+                    .load(R.drawable.baseline_account_circle_24)
                     .fitCenter()
                     .into(ivUpload);
         }
 
         Log.i("imageUri", "Set done: " + avatarImagesRef.child(getUID()));
-
-
-        tvDisplayName.setText(getDisplayName());
 
         tvEmail.setText(getUserEmail());
 

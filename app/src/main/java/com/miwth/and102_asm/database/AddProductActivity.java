@@ -1,10 +1,10 @@
 package com.miwth.and102_asm.database;
 
-import static com.yalantis.ucrop.UCrop.RESULT_ERROR;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,9 +19,12 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.miwth.and102_asm.R;
+import com.miwth.and102_asm.adapter.ImageListAdapter;
 import com.miwth.and102_asm.fragment.ProductManagementFragment;
 import com.miwth.and102_asm.model.Product;
 import com.miwth.and102_asm.users.UserAuth;
@@ -32,42 +35,50 @@ import java.util.Objects;
 public class AddProductActivity extends AppCompatActivity implements ProductDAO, UserAuth {
 
     EditText edtProductID, edtProductName, edtProductPrice, edtProductQuantity;
-    Button btnAddProduct, btnBack;
+    Button btnAddProduct;
     ImageButton iBtnBack;
     ProductManagementFragment productManagementFragment;
     ImageView imgProduct;
     TextView tvUploadImage;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    Uri stockImgUrl;
     ArrayList<Product> productArrayList = new ArrayList<>();
+    ArrayList<Uri> imageList = new ArrayList<>();
+    ImageListAdapter imageListAdapter;
+    RecyclerView imgList_rv;
 
-    ActivityResultLauncher<Intent> getCroppedImage = registerForActivityResult(new
-            ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == RESULT_OK) {
-                Intent intent = result.getData();
-                if (intent != null) {
-                    Uri resultUri = Uri.parse(intent.getStringExtra("resultUri"));
-                    stockImgUrl = resultUri;
-                    imgProduct.setImageURI(resultUri);
-                    tvUploadImage.setVisibility(View.GONE);
+
+    ActivityResultLauncher<Intent> mGetMultiImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            imageList.clear();
+                            if (data.getClipData() != null) {
+                                Log.d("image", "got images");
+                                int count = data.getClipData().getItemCount();
+                                for (int i = 0; i < count; i++) {
+                                    Uri imageUri = data.getClipData().getItemAt(i).getUri();
+                                    imageList.add(imageUri);
+                                }
+                            } else if (data.getData() != null) {
+                                Log.d("image", "got 1 image");
+                                Uri imageUri = data.getData();
+                                imageList.add(imageUri);
+                            }
+                        } else {
+                            Log.d("image", "no image");
+                        }
+                        imgProduct.setImageURI(imageList.get(0));
+                        tvUploadImage.setVisibility(View.GONE);
+                        imageListAdapter.notifyDataSetChanged();
+                    }
                 }
-            } else if (result.getResultCode() == RESULT_ERROR) {
-                Toast.makeText(AddProductActivity.this, "Image cropping error", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(AddProductActivity.this, "Image cropping cancelled", Toast.LENGTH_SHORT).show();
             }
-
-        }
-    });
-
-    ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
-            ActivityResultContracts.GetContent(), result -> {
-        Intent intent = new Intent(AddProductActivity.this, ImageCropperActivity.class);
-        intent.putExtra("stockImgUrl", result.toString());
-        getCroppedImage.launch(intent);
-    });
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +89,19 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
         edtProductName = findViewById(R.id.etProductName);
         edtProductPrice = findViewById(R.id.etProductPrice);
         edtProductQuantity = findViewById(R.id.etProductQuantity);
-        imgProduct = findViewById(R.id.ivProfilePicture);
+        imgProduct = findViewById(R.id.ivProductImg);
         tvUploadImage = findViewById(R.id.tvUploadImage);
 
-        btnBack = findViewById(R.id.btnGoBack);
+        imageListAdapter = new ImageListAdapter(this, imageList);
+        imgList_rv = findViewById(R.id.imgList_rv);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        imgList_rv.setLayoutManager(linearLayoutManager);
+        imgList_rv.setAdapter(imageListAdapter);
+
+
         iBtnBack = findViewById(R.id.btn_back);
-        btnBack.setOnClickListener(v -> finish());
         iBtnBack.setOnClickListener(v -> finish());
 
         Intent getData = getIntent();
@@ -96,7 +114,11 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
         productManagementFragment = new ProductManagementFragment();
         btnAddProduct = findViewById(R.id.btnAddProduct);
 
-        imgProduct.setOnClickListener(v -> mGetContent.launch("image/*"));
+        imgProduct.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            mGetMultiImage.launch(intent);
+        });
 
         btnAddProduct.setOnClickListener(v -> {
             String productID = edtProductID.getText().toString();
@@ -139,13 +161,12 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
             Product product = new Product(Integer.parseInt(productID), productName,
                     productPrice, Integer.parseInt(productQuantity), productImg, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
             Intent intent = new Intent();
-            if (stockImgUrl == null) {
+            if (imageList == null) {
                 Log.e("Error", "Image URI is null");
                 Toast.makeText(this, "Choose an image", Toast.LENGTH_SHORT).show();
             } else {
                 intent.putExtra("product", product);
-                intent.putExtra("imgUri", stockImgUrl.toString());
-                Log.i("imgUri", "Got uri path: " + stockImgUrl.getPath() + " Got uri string: " + stockImgUrl.toString());
+                intent.putExtra("uri_list", imageList);
                 setResult(RESULT_OK, intent);
                 finish();
             }

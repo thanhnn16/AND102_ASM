@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.database.ImageCropperActivity;
 
@@ -52,6 +53,15 @@ public class UpdateAccountInfo extends AppCompatActivity implements UserAuth {
                     Uri resultUri = Uri.parse(intent.getStringExtra("resultUri"));
                     photoUrl = resultUri;
                     ivProfilePicture.setImageURI(resultUri);
+                    UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                            .setPhotoUri(resultUri)
+                            .build();
+                    user.updateProfile(userProfileChangeRequest).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.i("Update profile", "User profile updated.");
+                        }
+                    });
+
                     tvUploadImage.setVisibility(View.GONE);
                 }
             } else if (result.getResultCode() == RESULT_ERROR) {
@@ -64,9 +74,13 @@ public class UpdateAccountInfo extends AppCompatActivity implements UserAuth {
 
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
             ActivityResultContracts.GetContent(), result -> {
-        Intent intent = new Intent(UpdateAccountInfo.this, ImageCropperActivity.class);
-        intent.putExtra("stockImgUrl", result.toString());
-        getCroppedImage.launch(intent);
+        if (result != null) {
+            Intent intent = new Intent(UpdateAccountInfo.this, ImageCropperActivity.class);
+            intent.putExtra("stockImgUrl", result.toString());
+            getCroppedImage.launch(intent);
+        } else {
+            Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
+        }
     });
 
     @Override
@@ -86,7 +100,7 @@ public class UpdateAccountInfo extends AppCompatActivity implements UserAuth {
             actionBar.setTitle(null);
         }
 
-        ivProfilePicture = findViewById(R.id.ivProfilePicture);
+        ivProfilePicture = findViewById(R.id.ivProductImg);
         btnBack = findViewById(R.id.btn_back);
         etDisplayName = findViewById(R.id.etDisplayName);
         etDOB = findViewById(R.id.etDOB);

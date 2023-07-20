@@ -35,8 +35,8 @@ public class ImageCropperActivity extends AppCompatActivity {
                 Uri destUri = createImageUri(Uri.parse(imgUri), destFileName);
                 UCrop.of(Uri.parse(imgUri), destUri)
                         .withOptions(new UCrop.Options())
-                        .withAspectRatio(3, 4)
-                        .withMaxResultSize(500, 500)
+//                        .withAspectRatio(3, 4)
+                        .withMaxResultSize(1920, 1080)
                         .start(ImageCropperActivity.this);
             }
         }

@@ -23,7 +23,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AND102_ASM"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".database.UpdateProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".users.ChangeUserPictureActivity"
+            android:exported="false" />
+        <activity
+            android:name=".users.SignUpActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".database.ProductDetail"
+            android:exported="false" />
         <activity
             android:name=".welcome.LoginSignupScreen"
             android:exported="false" />
@@ -44,7 +58,7 @@
             android:name=".database.AddProductActivity"
             android:exported="false"
             android:screenOrientation="nosensor"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".users.PhoneLogin"
             android:exported="false"

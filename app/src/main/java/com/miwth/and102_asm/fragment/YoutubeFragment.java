@@ -15,13 +15,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.miwth.and102_asm.R;
 
 public class YoutubeFragment extends Fragment {
     WebView webView;
     SwipeRefreshLayout swipeRefreshLayout;
-    FloatingActionButton floatingActionButton;
+    ExtendedFloatingActionButton floatingActionButton;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override

@@ -6,8 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 
@@ -18,8 +16,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.miwth.and102_asm.MainActivity;
-import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.model.Product;
 
 import java.io.ByteArrayOutputStream;
@@ -36,9 +32,11 @@ import java.util.concurrent.CountDownLatch;
 
 public interface ProductDAO {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://and102-asm-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
+    DatabaseReference productCatalogRef = mDatabase.child("product_catalog");
     FirebaseStorage storage = FirebaseStorage.getInstance("gs://and102-asm.appspot.com");
     StorageReference productImagesRef = storage.getReference().child("product_img");
     StorageReference avatarImagesRef = storage.getReference().child("avatar_img");
+
 
     default void insert(Product product, String userId) {
         mDatabase.child(userId).child(String.valueOf(product.getProductID())).setValue(product);
@@ -46,9 +44,6 @@ public interface ProductDAO {
 
     default void uploadProductImg(ArrayList<Uri> imgUriList, String uID, int productID, Context context, UploadCallBack callBack) {
         int totalImages = imgUriList.size();
-        ProgressBar progressBar = ((Activity) context).findViewById(R.id.progressBarProductManagement);
-        MainActivity mainActivity = new MainActivity();
-        progressBar.setVisibility(View.VISIBLE);
         final CountDownLatch latch = new CountDownLatch(totalImages);
 
         for (int i = 0; i < totalImages; i++) {
@@ -62,7 +57,7 @@ public interface ProductDAO {
                     Log.e("Error", "Failed to decode image file: " + imgUri);
                 } else {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmapImage.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+                    bitmapImage.compress(Bitmap.CompressFormat.JPEG, 70, baos);
                     bitmapImage.recycle();
                     File outputFile = new File(context.getCacheDir(), "temp" + i + ".jpg");
                     FileOutputStream fos;
@@ -115,7 +110,6 @@ public interface ProductDAO {
                             ((Activity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    progressBar.setVisibility(View.GONE);
                                     callBack.onUploadComplete();
                                 }
                             });
@@ -136,5 +130,13 @@ public interface ProductDAO {
                 item.delete();
             }
         });
+    }
+
+    default String getDefaultImgUri(String uid, String id) {
+        return "gs://and102-asm.appspot.com/product_img/" + uid + "/" + id + "/default";
+    }
+
+    default StorageReference getDefaultProductImagesRef(String uid, String id) {
+        return productImagesRef.child(uid).child(id).child("default");
     }
 }

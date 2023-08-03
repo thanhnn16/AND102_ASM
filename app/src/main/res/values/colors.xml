@@ -13,6 +13,6 @@
     <color name="send_bg_enable">#30315f</color>
     <color name="send_disable">#e79e8c</color>
     <color name="send_bg_disable">#686AA8</color>
-
+    <color name="light_yellow">#FEC54B</color>
 
 </resources>

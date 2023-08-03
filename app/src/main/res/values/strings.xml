@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PS28372_ASM</string>
+    <string name="app_name">Potato Store</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="go_back">Go back</string>
@@ -59,7 +59,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="phone_number_comma">Phone Number,</string>
     <string name="skip"><![CDATA[Skip >>]]></string>
-    <string name="next"><![CDATA[Next >]]></string>
+    <string name="next">NEXT</string>
     <string name="create_a_new_account">Create a new account</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
@@ -85,4 +85,24 @@
     <string name="mail_me">Mail me</string>
     <string name="call_me">Call me</string>
     <string name="qty">Qty</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="menu_allcaps">MENU</string>
+    <string name="voice_search">VOICE SEARCH</string>
+    <string name="hello">"Hello, "</string>
+    <string name="category_image">Category image</string>
+    <string name="category_name">Category</string>
+    <string name="show_categories">Show Categories</string>
+    <string name="categories">Categories</string>
+    <string name="home">Home</string>
+    <string name="management">Management</string>
+    <string name="category">Category</string>
+    <string name="no_product_found">No Product Found</string>
+    <string name="update_product">Update Product</string>
+    <string name="delete_product">Delete Product</string>
+    <string name="welcome_to_potato_store">Welcome to Potato Store.</string>
+    <string name="add_product_category">Add Product Category</string>
+    <string name="product_management">Product Management</string>
+    <string name="all_products">All Products</string>
+    <string name="enter_your_email_to_continue">Enter your email to continue</string>
+    <string name="forgot_password">Forgot password?</string>
 </resources>

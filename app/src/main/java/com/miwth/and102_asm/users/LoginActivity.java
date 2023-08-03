@@ -32,7 +32,7 @@ import com.miwth.and102_asm.MainActivity;
 import com.miwth.and102_asm.R;
 
 public class LoginActivity extends AppCompatActivity implements UserAuth {
-    TextView tvGoogle, tvOTP, btnText;
+    TextView tvGoogle, tvOTP, btnText, tvForgotPassword;
     GoogleSignInClient mGoogleSignInClient;
     GoogleSignInOptions gso;
     EditText etEmail, etPassword;
@@ -50,10 +50,9 @@ public class LoginActivity extends AppCompatActivity implements UserAuth {
                         Toast.makeText(this, "Logging...", Toast.LENGTH_SHORT).show();
                         if (googleTask.isSuccessful()) {
                             Log.d("TAG", "signInWithCredential:success");
-
                             // Lấy IdToken của tài khoản Google
                             String idToken = account.getIdToken();
-
+                            Log.d("TAG", "idtoken: " + idToken);
                             if (idToken != null && !idToken.isEmpty()) {
                                 // Tạo AuthCredential từ IdToken
                                 AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
@@ -62,9 +61,11 @@ public class LoginActivity extends AppCompatActivity implements UserAuth {
                                         .addOnCompleteListener(firebaseTask -> {
                                             if (firebaseTask.isSuccessful()) {
                                                 // Đăng nhập thành công
-                                                FirebaseUser user = mAuth.getCurrentUser();
+                                                FirebaseUser user = firebaseTask.getResult().getUser();
                                                 if (user != null) {
-                                                    mAuth.updateCurrentUser(user);
+                                                    Log.d("TAG", "new user: " + user.getDisplayName());
+                                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                                    finishAffinity();
                                                 } else {
                                                     Log.e("TAG", "User is null");
                                                 }
@@ -104,6 +105,13 @@ public class LoginActivity extends AppCompatActivity implements UserAuth {
         tvGoogle = findViewById(R.id.tvGoogle);
         tvOTP = findViewById(R.id.tvPhoneOTP);
 
+        tvForgotPassword = findViewById(R.id.tvForgotPassword);
+
+        tvForgotPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class).setAction("ForgotPasswordActivity");
+            startActivity(intent);
+        });
+
         btnLogin.setOnClickListener(v -> {
             startAnimation();
             LoginActivity.this.setButtonLogin();
@@ -123,7 +131,7 @@ public class LoginActivity extends AppCompatActivity implements UserAuth {
         });
 
         tvOTP.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, PhoneLogin.class);
+            Intent intent = new Intent(LoginActivity.this, PhoneLogin.class).setAction(Intent.ACTION_VIEW);
             startActivity(intent);
         });
     }
@@ -150,7 +158,7 @@ public class LoginActivity extends AppCompatActivity implements UserAuth {
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class).setAction("MainActivity"));
                             finishAffinity();
                         } else {
                             Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();

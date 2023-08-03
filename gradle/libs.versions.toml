@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.0-alpha13"
+agp = "8.2.0-alpha15"
 android-image-cropper = "4.5.0"
 compiler = "4.12.0"
 compressor = "2.1.0"
@@ -24,6 +24,7 @@ picasso = "2.71828"
 play-services-auth = "20.6.0"
 swiperefreshlayout = "1.1.0"
 ucrop = "2.2.6"
+car-ui-lib = "2.5.0"
 
 [libraries]
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "android-image-cropper" }
@@ -50,6 +51,7 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "play-services-auth" }
 ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
+car-ui-lib = { group = "com.android.car.ui", name = "car-ui-lib", version.ref = "car-ui-lib" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

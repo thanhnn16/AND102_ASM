@@ -1,21 +1,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/product_management"
+        android:id="@+id/product_home"
         android:icon="@drawable/product_management_icon_color_selector"
-        android:title="@string/product"
+        android:title="@string/home"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/youtube"
-        android:icon="@drawable/youtube_icon_color_selector"
-        android:title="@string/youtube"
+        android:id="@+id/category_menu"
+        android:icon="@drawable/category_icon_color_selector"
+        android:title="@string/category"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/contact"
-        android:icon="@drawable/contact_icon_color_selector"
-        android:title="@string/contact"
+        android:id="@+id/product_management"
+        android:icon="@drawable/add_product_icon_color_selector"
+        android:title="@string/management"
         app:showAsAction="ifRoom" />
 
     <item
@@ -24,8 +24,4 @@
         android:title="@string/account"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:icon="@drawable/setting_icon_color_selector"
-        android:title="@string/setting"
-        app:showAsAction="ifRoom" />
 </menu>

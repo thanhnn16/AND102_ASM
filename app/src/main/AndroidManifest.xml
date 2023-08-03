@@ -33,7 +33,8 @@
             android:exported="false" />
         <activity
             android:name=".users.SignUpActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustUnspecified" />
 
         <activity
             android:name=".database.ProductDetail"

@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/add_product_fill" android:state_checked="true" />
+    <item android:color="@color/black" android:drawable="@drawable/add_product_outline" android:tint="@color/black" />
+</selector>

@@ -4,6 +4,6 @@
     <corners android:radius="4dp" />
     <solid android:color="@color/send_disable" />
     <size
-        android:width="8dp"
+        android:width="12dp"
         android:height="8dp" />
 </shape>

@@ -1,8 +1,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="8dp" />
+    <corners android:radius="10dp" />
 
     <stroke
-        android:width="2dp"
-        android:color="@color/btn_login_disabled" />
+        android:width="1.5dp"
+        android:color="@color/send_disable" />
     <solid android:color="@color/transparent" />
 </shape>

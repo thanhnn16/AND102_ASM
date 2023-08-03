@@ -108,7 +108,7 @@ public class UpdateAccountInfo extends AppCompatActivity implements UserAuth {
 
         Glide.with(this).load(user.getPhotoUrl()).fitCenter().into(ivProfilePicture);
         etDisplayName.setText(user.getDisplayName());
-        getBirthdayAndBio(new Callback() {
+        getBirthdayAndBio(new UserInfoCallBack() {
             @Override
             public void onBirthdayLoaded(String birthday) {
                 Log.i("birthday", birthday);

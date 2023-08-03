@@ -40,12 +40,9 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
                         .get(position)).centerCrop()
                 .override(300, 400)
                 .into(holder.thumbnail_image);
-        holder.thumbnail_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ShapeableImageView product_img = ((Activity) context).findViewById(R.id.ivProductImg);
-                product_img.setImageURI(uriArrayList.get(holder.getAdapterPosition()));
-            }
+        holder.thumbnail_image.setOnClickListener(v -> {
+            ShapeableImageView product_img = ((Activity) context).findViewById(R.id.ivProductImg);
+            product_img.setImageURI(uriArrayList.get(holder.getAbsoluteAdapterPosition()));
         });
     }
 

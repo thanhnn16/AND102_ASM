@@ -36,15 +36,23 @@ public interface UserAuth {
     }
 
     default String getUserEmail() {
-        return (mAuth.getCurrentUser()).getEmail();
+        if (mAuth.getCurrentUser() == null) {
+            return "email_null";
+        } else {
+            return (mAuth.getCurrentUser()).getEmail();
+        }
     }
 
     default String getDisplayName() {
-        return (mAuth.getCurrentUser()).getDisplayName();
+        if (mAuth.getCurrentUser() == null) {
+            return "display_name_null";
+        } else {
+            return (mAuth.getCurrentUser()).getDisplayName();
+        }
     }
 
 
-    default void getBirthdayAndBio(Callback callback) {
+    default void getBirthdayAndBio(UserInfoCallBack userInfoCallBack) {
         infoDB.child(getUID()).child("birthday").get().addOnCompleteListener(
                 new OnCompleteListener<DataSnapshot>() {
                     @Override
@@ -60,7 +68,7 @@ public interface UserAuth {
                         DataSnapshot birthdaySnapshot = task.getResult();
                         if (birthdaySnapshot != null && birthdaySnapshot.getValue() != null) {
                             String birthday = birthdaySnapshot.getValue().toString();
-                            callback.onBirthdayLoaded(birthday);
+                            userInfoCallBack.onBirthdayLoaded(birthday);
                         }
                     }
                 }
@@ -79,7 +87,7 @@ public interface UserAuth {
                         DataSnapshot birthdaySnapshot = task.getResult();
                         if (birthdaySnapshot != null && birthdaySnapshot.getValue() != null) {
                             String bio = birthdaySnapshot.getValue().toString();
-                            callback.onBioLoaded(bio);
+                            userInfoCallBack.onBioLoaded(bio);
                         }
                     }
                 }
@@ -106,25 +114,11 @@ public interface UserAuth {
                 });
     }
 
-    default void uploadAvatar(Uri imgUri, FirebaseUser user) {
-        UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
-                .setPhotoUri(imgUri)
-                .build();
-        user.updateProfile(profileChangeRequest)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("TAG", "User profile updated.");
-                    } else {
-                        Log.d("TAG", "User profile update failed.");
-                    }
-                });
-    }
-
     default void logout() {
         mAuth.signOut();
     }
 
-    public interface Callback {
+    public interface UserInfoCallBack {
         void onBirthdayLoaded(String birthday);
 
         void onBioLoaded(String bio);

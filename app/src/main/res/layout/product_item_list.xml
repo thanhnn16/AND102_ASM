@@ -41,15 +41,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/product_name"
-            android:textColor="@color/btn_login"
+            android:textColor="@color/black"
             android:layout_gravity="center"
+            android:textStyle="bold"
             android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:textColor="@color/btn_login_disabled"
+            android:textColor="@color/send_disable"
             android:textSize="12sp"
             android:textStyle="italic"
             android:text="@string/see_more_dot" />

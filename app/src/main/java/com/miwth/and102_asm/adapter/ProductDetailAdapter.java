@@ -1,5 +1,6 @@
 package com.miwth.and102_asm.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -41,6 +42,7 @@ public class ProductDetailAdapter extends RecyclerView.Adapter<ProductDetailAdap
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 

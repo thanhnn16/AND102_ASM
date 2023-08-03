@@ -9,98 +9,76 @@ import androidx.annotation.NonNull;
 public class Product implements Parcelable {
     private int productID;
     private String productName;
-    private String productPrice;
+    private float productPrice;
     private int productQuantity;
-    private String imgSrc;
-    private String useID;
+    private int productCategoryId;
     private String productDes;
-    private String category;
 
     public Product() {
         // Default constructor required for Firebase deserialization
     }
-    public Product(int productID, String productName, String productPrice, int productQuantity, String imgSrc, String useID) {
+
+    public Product(int productID, String productName, float productPrice, int productQuantity, int productCategoryId, String productDes) {
         this.productID = productID;
         this.productName = productName;
         this.productPrice = productPrice;
         this.productQuantity = productQuantity;
-        this.imgSrc = imgSrc;
-        this.useID = useID;
+        this.productCategoryId = productCategoryId;
+        this.productDes = productDes;
     }
 
     public int getProductID() {
         return productID;
     }
 
-    public void setProductID(int productID) {
-        this.productID = productID;
-    }
-
     public String getProductName() {
         return productName;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public String getProductPrice() {
-        return productPrice;
-    }
-
-    public void setProductPrice(String productPrice) {
-        this.productPrice = productPrice;
+    protected Product(Parcel in) {
+        productID = in.readInt();
+        productName = in.readString();
+        productPrice = in.readFloat();
+        productQuantity = in.readInt();
+        productCategoryId = in.readInt();
+        productDes = in.readString();
     }
 
     public int getProductQuantity() {
         return productQuantity;
     }
 
-    public void setProductQuantity(int productQuantity) {
-        this.productQuantity = productQuantity;
+    public float getProductPrice() {
+        return productPrice;
     }
 
-    public String getImgSrc() {
-        return imgSrc;
+    public int getProductCategoryId() {
+        return productCategoryId;
     }
 
-    public void setImgSrc(String imgSrc) {
-        this.imgSrc = imgSrc;
-    }
-
-    public String getUseID() {
-        return useID;
-    }
-
-    public void setUseID(String useID) {
-        this.useID = useID;
-    }
-
-    public String getProductDes() {
-        return "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                + " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                + " Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-                + " Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                + " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                + " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                + " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                + " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                + " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                + " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                + " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                + " Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-    }
-
-    public void setProductDes(String productDes) {
-        this.productDes = productDes;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
+    public String getProductCategoryName() {
+        int id = getProductCategoryId();
+        String[] categories = {"Vegetables", "Fruits", "Dairy", "Bread", "Eggs", "Mushroom", "Oats", "Rice", "Others"};
+        switch (id) {
+            case 1:
+                return categories[0];
+            case 2:
+                return categories[1];
+            case 3:
+                return categories[2];
+            case 4:
+                return categories[3];
+            case 5:
+                return categories[4];
+            case 6:
+                return categories[5];
+            case 7:
+                return categories[6];
+            case 8:
+                return categories[7];
+            default:
+                return categories[8];
+        }
     }
 
     public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product>() {
@@ -115,13 +93,8 @@ public class Product implements Parcelable {
         }
     };
 
-    protected Product(Parcel in) {
-        productID = in.readInt();
-        productName = in.readString();
-        productPrice = in.readString();
-        productQuantity = in.readInt();
-        imgSrc = in.readString();
-        useID = in.readString();
+    public String getProductDes() {
+        return productDes;
     }
 
     @Override
@@ -133,10 +106,9 @@ public class Product implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeInt(productID);
         dest.writeString(productName);
-        dest.writeString(productPrice);
+        dest.writeFloat(productPrice);
         dest.writeInt(productQuantity);
-        dest.writeString(imgSrc);
-        dest.writeString(useID);
+        dest.writeInt(productCategoryId);
+        dest.writeString(productDes);
     }
-
 }

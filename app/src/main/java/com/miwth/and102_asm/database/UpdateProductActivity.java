@@ -1,31 +1,35 @@
 package com.miwth.and102_asm.database;
 
-import static com.yalantis.ucrop.UCrop.RESULT_ERROR;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.miwth.and102_asm.R;
+import com.miwth.and102_asm.adapter.ImageListAdapter;
 import com.miwth.and102_asm.model.Product;
 import com.miwth.and102_asm.users.UserAuth;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -33,44 +37,49 @@ public class UpdateProductActivity extends AppCompatActivity implements ProductD
     ImageButton btn_back;
     ShapeableImageView imgProduct;
     Button btnUpdate;
-    TextInputEditText etID, etName, etPrice, etQuantity;
+    TextInputEditText etID, etName, etPrice, etQuantity, etCategory, etDes;
+    TextView tvUploadImage;
     Uri stockImgUrl;
     ArrayList<Product> productArrayList;
     Product currentProduct;
+    ArrayList<Uri> imageList;
+    ImageListAdapter imageListAdapter;
+    RecyclerView imgList_rv;
+    FirebaseUser user;
+    int selectedCategory = 0;
 
-    ActivityResultLauncher<Intent> getCroppedImage = registerForActivityResult(new
-            ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == RESULT_OK) {
-                Intent intent = result.getData();
-                if (intent != null) {
-                    Log.i("imgUri", "Got stock uri path: " + intent.getStringExtra("resultUri"));
-                    Uri resultUri = Uri.parse(intent.getStringExtra("resultUri"));
-                    stockImgUrl = resultUri;
-                    Log.i("imgUri", "Got new stock uri path: " + stockImgUrl.getPath() + " Got uri string: " + stockImgUrl.toString());
-                    imgProduct.setImageURI(resultUri);
+    ActivityResultLauncher<Intent> mGetMultiImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            imageList.clear();
+                            if (data.getClipData() != null) {
+                                Log.d("image", "got images");
+                                int count = data.getClipData().getItemCount();
+                                for (int i = 0; i < count; i++) {
+                                    Uri imageUri = data.getClipData().getItemAt(i).getUri();
+                                    imageList.add(imageUri);
+                                }
+                            } else if (data.getData() != null) {
+                                Log.d("image", "got 1 image");
+                                Uri imageUri = data.getData();
+                                imageList.add(imageUri);
+                            }
+                        } else {
+                            Log.d("image", "no image");
+                        }
+                        imgProduct.setImageURI(imageList.get(0));
+                        tvUploadImage.setVisibility(View.GONE);
+                        imageListAdapter.notifyDataSetChanged();
+                    }
                 }
-            } else if (result.getResultCode() == RESULT_ERROR) {
-                Toast.makeText(UpdateProductActivity.this, "Image cropping error", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(UpdateProductActivity.this, "Image cropping cancelled", Toast.LENGTH_SHORT).show();
             }
-
-        }
-    });
-
-    ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
-            ActivityResultContracts.GetContent(), result -> {
-        if (result != null) {
-            Intent intent = new Intent(UpdateProductActivity.this, ImageCropperActivity.class);
-            intent.putExtra("stockImgUrl", result.toString());
-            getCroppedImage.launch(intent);
-        } else {
-            Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
-        }
-    });
-
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +88,50 @@ public class UpdateProductActivity extends AppCompatActivity implements ProductD
         btn_back = findViewById(R.id.btn_back);
         imgProduct = findViewById(R.id.ivProductImg);
         btnUpdate = findViewById(R.id.btnUpdate);
+
         etID = findViewById(R.id.etProductId);
         etName = findViewById(R.id.etProductName);
         etPrice = findViewById(R.id.etProductPrice);
         etQuantity = findViewById(R.id.etProductQuantity);
+        etCategory = findViewById(R.id.etProductCategory);
+        etDes = findViewById(R.id.etProductDes);
+
+
+        tvUploadImage = findViewById(R.id.tvUploadImage);
+        imgList_rv = findViewById(R.id.imgList_rv);
+
+        user = mAuth.getCurrentUser();
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            currentProduct = intent.getParcelableExtra("product");
+            imageList = intent.getParcelableArrayListExtra("tempImgList");
+            if (imageList == null) {
+                imageList = new ArrayList<>();
+            }
+            imgProduct.setImageURI(imageList.get(0));
+        }
+        if (currentProduct == null) {
+            Log.e("Error", "Product is null");
+            Toast.makeText(this, "Product is null", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            etID.setText(String.valueOf(currentProduct.getProductID()));
+            etName.setText(currentProduct.getProductName());
+            etPrice.setText(String.valueOf(currentProduct.getProductPrice()));
+            etQuantity.setText(String.valueOf(currentProduct.getProductQuantity()));
+            etCategory.setText(currentProduct.getProductCategoryName());
+            etDes.setText(currentProduct.getProductDes());
+        }
+        btn_back.setOnClickListener(v -> finish());
+        imgProduct.setOnClickListener(v -> mGetMultiImage.launch(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)));
+
+        imageListAdapter = new ImageListAdapter(this, imageList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        imgList_rv.setLayoutManager(linearLayoutManager);
+        imgList_rv.setAdapter(imageListAdapter);
 
         productArrayList = new ArrayList<>();
         mDatabase.child(getUID()).get().addOnCompleteListener(task -> {
@@ -97,54 +146,16 @@ public class UpdateProductActivity extends AppCompatActivity implements ProductD
                 Log.e("ProductManagement", "Error getting data", task.getException());
             }
         });
-
-        Intent intent = getIntent();
-        currentProduct = intent.getParcelableExtra("product");
-        if (currentProduct == null) {
-            Log.e("Error", "Product is null");
-            Toast.makeText(this, "Product is null", Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            etID.setText(String.valueOf(currentProduct.getProductID()));
-            etName.setText(currentProduct.getProductName());
-            etPrice.setText(currentProduct.getProductPrice());
-            etQuantity.setText(String.valueOf(currentProduct.getProductQuantity()));
-            String imgURI = currentProduct.getImgSrc();
-            stockImgUrl = Uri.parse(imgURI);
-            String productID = String.valueOf(currentProduct.getProductID());
-            if (imgURI != null) {
-                File localFile;
-                try {
-                    localFile = File.createTempFile("images", "jpg");
-                } catch (IOException e) {
-                    Log.e("Error", Objects.requireNonNull(e.getMessage()));
-                    return;
-                }
-                File finalLocalFile = localFile;
-                productImagesRef.child(productID).getFile(localFile).addOnSuccessListener(taskSnapshot -> {
-                    // Local temp file has been created
-                    Glide.with(this)
-                            .load(finalLocalFile)
-                            .into(imgProduct);
-                    Log.i("Success", "Success");
-                }).addOnFailureListener(exception -> {
-                    // Handle any errors
-                    Log.e("Error", Objects.requireNonNull(exception.getMessage()));
-                });
-            }
-        }
-        btn_back.setOnClickListener(v -> finish());
-        imgProduct.setOnClickListener(v -> mGetContent.launch("image/*"));
+        etCategory.setOnClickListener(v -> showChooseCategoryDialog());
         btnUpdate.setOnClickListener(v -> setBtnUpdate());
     }
 
     private void setBtnUpdate() {
-
         String productID = Objects.requireNonNull(etID.getText()).toString();
         String productName = Objects.requireNonNull(etName.getText()).toString();
         String productPrice = Objects.requireNonNull(etPrice.getText()).toString();
         String productQuantity = Objects.requireNonNull(etQuantity.getText()).toString();
-        String productImg = "gs://and102-asm.appspot.com/avatar/" + productID;
+        String productDescription = Objects.requireNonNull(etDes.getText()).toString();
 
         if (productID.isEmpty()) {
             etID.setError("Please enter product ID");
@@ -178,19 +189,48 @@ public class UpdateProductActivity extends AppCompatActivity implements ProductD
             etQuantity.requestFocus();
             return;
         }
-
-        Product product = new Product(Integer.parseInt(productID), productName,
-                productPrice, Integer.parseInt(productQuantity), productImg, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
-        Intent intent = new Intent();
-        if (stockImgUrl == null) {
+        if (imageList == null) {
             Log.e("Error", "Image URI is null");
             Toast.makeText(this, "Choose an image", Toast.LENGTH_SHORT).show();
         } else {
-            intent.putExtra("updatedProduct", product);
-            intent.putExtra("imgUri", stockImgUrl.toString());
-            Log.i("imgUri", "Got uri path: " + stockImgUrl.getPath() + " Got uri string: " + stockImgUrl.toString());
-            setResult(RESULT_OK, intent);
-            finish();
+            Product product = new Product(
+                    Integer.parseInt(productID), productName, Float.parseFloat(productPrice), Integer.parseInt(productQuantity), selectedCategory, productDescription
+            );
+            UploadCallBack uploadCallBack = new UploadCallBack() {
+                @Override
+                public void onUploadComplete() {
+                    Log.i("ProductManagement", "onUploadComplete: ");
+                    Toast.makeText(UpdateProductActivity.this, "Update complete", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.putExtra("updatedProduct", product);
+                    intent.putExtra("updatedImgList", imageList);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+
+                @Override
+                public void onUploadError(Throwable throwable) {
+                    Toast.makeText(UpdateProductActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("ProductManagement", "onUploadError: ", throwable);
+                }
+            };
+            delete(String.valueOf(currentProduct.getProductID()), getUID());
+            insert(product, getUID());
+            uploadProductImg(imageList, getUID(), product.getProductID(), this, uploadCallBack);
         }
+    }
+
+    private void showChooseCategoryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose category");
+        String[] categories = {"Vegetables", "Fruits", "Dairy", "Bread", "Eggs", "Mushroom", "Oats", "Rice", "Others"};
+        builder.setItems(categories, (dialog, which) -> {
+            String category = categories[which];
+            selectedCategory = which + 1;
+            Log.d("AddProductActivity", "selected category name: " + category);
+            Log.d("AddProductActivity", "selected category: " + selectedCategory);
+            etCategory.setText(category);
+        });
+        builder.create().show();
     }
 }

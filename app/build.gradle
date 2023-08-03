@@ -37,8 +37,7 @@ dependencies {
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout
-    //noinspection GradlePath
-    implementation files('D:/Android/ucrop-2.2.8.aar')
+    implementation libs.car.ui.lib
     testImplementation libs.junit
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.espresso.core
@@ -55,7 +54,7 @@ dependencies {
     implementation libs.glide
     implementation libs.androidx.swiperefreshlayout
     implementation libs.material
-    //noinspection GradlePath
-    implementation files('D:/Android/imageslideshow-0.1.2.aar')
     implementation libs.picasso
+    implementation 'com.github.ibrahimsn98:SmoothBottomBar:1.7.9'
+    implementation libs.ucrop
 }

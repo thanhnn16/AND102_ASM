@@ -18,25 +18,26 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="32dp"
             android:layout_marginVertical="16dp"
             android:padding="8dp"
-            app:cardCornerRadius="32dp"
+            app:cardCornerRadius="28dp"
             app:cardElevation="8dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="10dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imageView_profile"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
                     android:layout_marginStart="12dp"
                     android:contentDescription="@string/profile_picture"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/women_bags"
+                    android:src="@drawable/account"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:shapeAppearanceOverlay="@style/circleImageView" />
@@ -45,9 +46,9 @@
                     android:id="@+id/userName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
+                    android:layout_marginStart="16dp"
                     android:text="@string/username"
-                    android:textSize="28sp"
+                    android:textSize="24sp"
                     app:layout_constraintBottom_toTopOf="@id/userEmail"
                     app:layout_constraintStart_toEndOf="@+id/imageView_profile"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -56,10 +57,9 @@
                     android:id="@+id/userEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
+                    android:layout_marginStart="16dp"
                     android:text="@string/email"
                     android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/imageView_profile"
                     app:layout_constraintTop_toBottomOf="@+id/userName" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -67,16 +67,16 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="16dp"
             android:outlineSpotShadowColor="@color/btn_login_disabled"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp">
+            app:cardCornerRadius="32dp"
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingVertical="8dp">
 
@@ -90,12 +90,13 @@
 
                     <ImageView
                         android:id="@+id/imageView_profile_info"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="16dp"
                         android:contentDescription="@string/update_info"
-                        android:src="@drawable/account" />
+                        android:src="@drawable/account"
+                        app:tint="@color/send_enable" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -114,7 +115,8 @@
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="16dp"
                         android:importantForAccessibility="no"
-                        android:src="@drawable/baseline_arrow_forward_ios_24" />
+                        android:src="@drawable/baseline_arrow_forward_ios_24"
+                        app:tint="@color/send_enable" />
                 </RelativeLayout>
 
                 <View
@@ -134,11 +136,12 @@
 
                     <ImageView
                         android:id="@+id/imageView_profile_update"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="16dp"
                         android:contentDescription="@string/update_info"
+                        app:tint="@color/send_enable"
                         android:src="@drawable/account_edit_profile" />
 
                     <TextView
@@ -157,6 +160,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="16dp"
+                        app:tint="@color/send_enable"
                         android:importantForAccessibility="no"
                         android:src="@drawable/baseline_arrow_forward_ios_24" />
 
@@ -179,10 +183,11 @@
 
                     <ImageView
                         android:id="@+id/imageView_change_pw"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="16dp"
+                        app:tint="@color/send_enable"
                         android:contentDescription="@string/change_password"
                         android:src="@drawable/account_change_pw" />
 
@@ -201,6 +206,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
+                        app:tint="@color/send_enable"
                         android:layout_marginEnd="16dp"
                         android:importantForAccessibility="no"
                         android:src="@drawable/baseline_arrow_forward_ios_24" />
@@ -224,12 +230,13 @@
 
                     <ImageView
                         android:id="@+id/imageView_logout"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_centerVertical="true"
+                        android:src="@drawable/baseline_logout_32"
                         android:layout_marginStart="16dp"
                         android:contentDescription="@string/logout"
-                        android:src="@drawable/logout" />
+                        app:tint="@color/send_enable" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -246,6 +253,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
+                        app:tint="@color/send_enable"
                         android:layout_marginEnd="16dp"
                         android:importantForAccessibility="no"
                         android:src="@drawable/baseline_arrow_forward_ios_24" />
@@ -269,10 +277,11 @@
 
                     <ImageView
                         android:id="@+id/imageView_exit_app"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="16dp"
+                        app:tint="@color/send_enable"
                         android:contentDescription="@string/exit_app"
                         android:src="@drawable/exit" />
 
@@ -292,6 +301,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="16dp"
+                        app:tint="@color/send_enable"
                         android:importantForAccessibility="no"
                         android:src="@drawable/baseline_arrow_forward_ios_24" />
                 </RelativeLayout>

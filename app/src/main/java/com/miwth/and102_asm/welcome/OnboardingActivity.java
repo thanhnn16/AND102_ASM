@@ -25,7 +25,8 @@ import java.util.List;
 
 public class OnboardingActivity extends AppCompatActivity {
     final Context context = this;
-    Button btnSkip, btnNext;
+    Button btnNext;
+    ImageView btnBack;
     ViewPager2 viewPager2;
     LinearLayout layoutOnboardingIndicators;
     List<OnboardingModel> onboardingModelList;
@@ -38,31 +39,43 @@ public class OnboardingActivity extends AppCompatActivity {
 
         viewPager2 = findViewById(R.id.viewPager2);
         btnNext = findViewById(R.id.btnNext);
-        btnSkip = findViewById(R.id.btnSkip);
+        btnBack = findViewById(R.id.btnBack);
         layoutOnboardingIndicators = findViewById(R.id.onboardingIndicators);
 
         onboardingModelList = new ArrayList<>();
         onboardingModelList.add(
-                new OnboardingModel(R.drawable.onboarding_1, "Test 1", "Hi")
-        );
+                new OnboardingModel(R.drawable.onboarding_1
+                        , "Welcome to Fresh Fruits"
+                        , "Fast and responsibily delivery by our courier service" +
+                        "consectetur adipiscing elit, sed do " +
+                        "ex ea commodo consequat. Duis aute irure dolor " +
+                        "in reprehenderit in voluptate velit esse cillum " +
+                        "dolore eu fugiat nulla pariatur. Excepteur sint"));
+
         onboardingModelList.add(
-                new OnboardingModel(R.drawable.onboarding_2, "Test 2", "Hihi")
-        );
+                new OnboardingModel(R.drawable.onboarding_2
+                        , "We provide best quality Fruits to your family"
+                        , "Fast and responsibily delivery by our courier service" +
+                        "consectetur adipiscing elit, sed do " +
+                        "ex ea commodo consequat. Duis aute irure dolor " +
+                        "in reprehenderit in voluptate velit esse cillum " +
+                        "dolore eu fugiat nulla pariatur. Excepteur sint"));
+
+
         onboardingModelList.add(
-                new OnboardingModel(R.drawable.onboarding_3, "Test 3", "Hihihi")
-        );
+                new OnboardingModel(R.drawable.onboarding_3
+                        , "Fast and responsibily delivery by our courier service"
+                        , "Lorem ipsum dolor sit amet, " +
+                        "consectetur adipiscing elit, sed do " +
+                        "ex ea commodo consequat. Duis aute irure dolor " +
+                        "in reprehenderit in voluptate velit esse cillum " +
+                        "dolore eu fugiat nulla pariatur. Excepteur sint"));
 
         onboardingAdapter = new OnboardingAdapter(context, onboardingModelList);
         viewPager2.setAdapter(onboardingAdapter);
-
         setUpOnboardingIndicators();
         setCurrentIndicator(0);
-        btnSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(OnboardingActivity.this, SignUpActivity.class));
-            }
-        });
+        btnBack.setOnClickListener(v -> onBackPressed());
 
         viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -121,11 +134,14 @@ public class OnboardingActivity extends AppCompatActivity {
                 );
             }
         }
+        if (index == 0) {
+            btnBack.setVisibility(View.INVISIBLE);
+        } else {
+            btnBack.setVisibility(View.VISIBLE);
+        }
         if (index == onboardingAdapter.getItemCount() - 1) {
             btnNext.setText("Start");
-            btnSkip.setVisibility(View.GONE);
         } else {
-            btnSkip.setVisibility(View.VISIBLE);
             btnNext.setText("Next");
         }
     }

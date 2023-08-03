@@ -18,26 +18,28 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.adapter.ImageListAdapter;
-import com.miwth.and102_asm.fragment.ProductManagementFragment;
+import com.miwth.and102_asm.fragment.ProductHomeFragment;
 import com.miwth.and102_asm.model.Product;
 import com.miwth.and102_asm.users.UserAuth;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class AddProductActivity extends AppCompatActivity implements ProductDAO, UserAuth {
 
-    EditText edtProductID, edtProductName, edtProductPrice, edtProductQuantity;
+    EditText edtProductID, edtProductName, edtProductPrice, edtProductQuantity, edtProductCategory, edtProductDescription;
+    TextInputLayout tilProductCategory;
     Button btnAddProduct;
     ImageButton iBtnBack;
-    ProductManagementFragment productManagementFragment;
+    ProductHomeFragment productHomeFragment;
     ImageView imgProduct;
     TextView tvUploadImage;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -45,6 +47,7 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
     ArrayList<Uri> imageList = new ArrayList<>();
     ImageListAdapter imageListAdapter;
     RecyclerView imgList_rv;
+    int selectedCategory = 0;
 
 
     ActivityResultLauncher<Intent> mGetMultiImage = registerForActivityResult(
@@ -91,6 +94,12 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
         edtProductQuantity = findViewById(R.id.etProductQuantity);
         imgProduct = findViewById(R.id.ivProductImg);
         tvUploadImage = findViewById(R.id.tvUploadImage);
+        edtProductCategory = findViewById(R.id.etProductCategory);
+        edtProductDescription = findViewById(R.id.etProductDes);
+
+        tilProductCategory = findViewById(R.id.tilProductCategory);
+        tilProductCategory.setOnClickListener(v -> showChooseCategoryDialog());
+        edtProductCategory.setOnClickListener(v -> showChooseCategoryDialog());
 
         imageListAdapter = new ImageListAdapter(this, imageList);
         imgList_rv = findViewById(R.id.imgList_rv);
@@ -111,7 +120,7 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
             Log.d("AddProductActivity", "Intent is null");
         }
 
-        productManagementFragment = new ProductManagementFragment();
+        productHomeFragment = new ProductHomeFragment();
         btnAddProduct = findViewById(R.id.btnAddProduct);
 
         imgProduct.setOnClickListener(v -> {
@@ -125,7 +134,7 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
             String productName = edtProductName.getText().toString();
             String productPrice = edtProductPrice.getText().toString();
             String productQuantity = edtProductQuantity.getText().toString();
-            String productImg = "gs://and102-asm.appspot.com/avatar/" + productID;
+            String productDescription = edtProductDescription.getText().toString();
 
             if (productID.isEmpty()) {
                 edtProductID.setError("Please enter product ID");
@@ -158,18 +167,49 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
                 return;
             }
 
-            Product product = new Product(Integer.parseInt(productID), productName,
-                    productPrice, Integer.parseInt(productQuantity), productImg, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+            Product product =
+                    new Product(Integer.parseInt(productID), productName,
+                            Float.parseFloat(productPrice), Integer.parseInt(productQuantity),
+                            selectedCategory, productDescription);
             Intent intent = new Intent();
             if (imageList == null) {
                 Log.e("Error", "Image URI is null");
                 Toast.makeText(this, "Choose an image", Toast.LENGTH_SHORT).show();
             } else {
+                UploadCallBack uploadCallBack = new UploadCallBack() {
+                    @Override
+                    public void onUploadComplete() {
+                        Log.i("ProductManagement", "onUploadComplete: ");
+                        Toast.makeText(AddProductActivity.this, "Upload complete", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+
+                    @Override
+                    public void onUploadError(Throwable throwable) {
+                        Toast.makeText(AddProductActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("ProductManagement", "onUploadError: ", throwable);
+                    }
+                };
                 intent.putExtra("product", product);
                 intent.putExtra("uri_list", imageList);
-                setResult(RESULT_OK, intent);
-                finish();
+                insert(product, getUID());
+                uploadProductImg(imageList, getUID(), product.getProductID(), this, uploadCallBack);
+                Log.i("ProductManagement", "onActivityResult: uploading");
             }
         });
+    }
+
+    private void showChooseCategoryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose category");
+        String[] categories = {"Vegetables", "Fruits", "Dairy", "Bread", "Eggs", "Mushroom", "Oats", "Rice", "Others"};
+        builder.setItems(categories, (dialog, which) -> {
+            String category = categories[which];
+            selectedCategory = which + 1;
+            Log.d("AddProductActivity", "selected category name: " + category);
+            Log.d("AddProductActivity", "selected category: " + selectedCategory);
+            edtProductCategory.setText(category);
+        });
+        builder.create().show();
     }
 }

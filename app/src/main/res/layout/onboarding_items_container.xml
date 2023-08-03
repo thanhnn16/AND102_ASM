@@ -12,26 +12,32 @@
         android:layout_height="0dp"
         android:layout_weight="4"
         android:importantForAccessibility="no"
-        android:src="@drawable/onboarding_3" />
+        android:scaleType="centerInside"
+        android:src="@drawable/onboarding_2" />
+
 
     <TextView
         android:id="@+id/onboardindTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
+        android:textAlignment="center"
         android:text="Onboarding Title"
-        android:textSize="32sp"
+        android:textSize="28sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/onboardingDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="32dp"
+        android:textAlignment="center"
         android:text="Onboarding Desc"
         android:textColor="@color/dark_gray"
-        android:textSize="22sp" />
+        android:textSize="18sp" />
 
 </LinearLayout>

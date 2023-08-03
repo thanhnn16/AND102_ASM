@@ -27,9 +27,9 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseUser;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.database.ProductDAO;
+import com.miwth.and102_asm.users.SignUpActivity;
 import com.miwth.and102_asm.users.UpdateAccountInfo;
 import com.miwth.and102_asm.users.UserAuth;
-import com.miwth.and102_asm.welcome.LoginSignupScreen;
 
 public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
     SharedPreferences sharedPreferences;
@@ -104,7 +104,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
             builder.setMessage("Are you sure you want to logout?");
             builder.setPositiveButton("Yes", (dialog, which) -> {
                 logout();
-                startActivity(new Intent(requireActivity(), LoginSignupScreen.class));
+                startActivity(new Intent(requireActivity(), SignUpActivity.class).setAction("SIGN_OUT"));
                 SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("login_state", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
@@ -129,6 +129,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     public void DialogUpdateProfile() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
@@ -167,7 +168,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
 
         tvEmail.setText(getUserEmail());
 
-        getBirthdayAndBio(new Callback() {
+        getBirthdayAndBio(new UserInfoCallBack() {
             @Override
             public void onBirthdayLoaded(String birthday) {
                 Log.i("birthday", birthday);

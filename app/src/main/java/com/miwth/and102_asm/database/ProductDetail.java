@@ -4,18 +4,19 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -30,7 +31,12 @@ import com.miwth.and102_asm.adapter.ProductDetailAdapter;
 import com.miwth.and102_asm.model.Product;
 import com.miwth.and102_asm.users.UserAuth;
 
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Random;
 
 public class ProductDetail extends AppCompatActivity implements ProductDAO, UserAuth {
 
@@ -41,29 +47,29 @@ public class ProductDetail extends AppCompatActivity implements ProductDAO, User
     FirebaseUser user;
     LottieAnimationView loading;
     ArrayList<Uri> uriArrayList;
+    ArrayList<Uri> tempImgList = new ArrayList<>();
     ProductDetailAdapter productDetailAdapter;
+    Toolbar toolbar;
 
     ActivityResultLauncher<Intent> updateProduct = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent intent = result.getData();
-                        if (intent != null) {
-                            Product updatedProduct = intent.getParcelableExtra("updatedProduct");
-                            if (updatedProduct != null) {
-                                delete(String.valueOf(product.getProductID()), user.getUid());
-                                insert(updatedProduct, user.getUid());
-                                product = updatedProduct;
-                                showLoading();
-                                new Handler().postDelayed(() -> getProduct(), 2000);
-                            }
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent intent = result.getData();
+                    if (intent != null) {
+                        Product updatedProduct = intent.getParcelableExtra("updatedProduct");
+                        if (updatedProduct != null) {
+                            product = updatedProduct;
+                            tempImgList = intent.getParcelableArrayListExtra("updatedImgList");
+                            uriArrayList.clear();
+                            uriArrayList.addAll(tempImgList);
+                            productDetailAdapter.notifyDataSetChanged();
+                            getProduct();
                         }
-                    } else if (result.getResultCode() == RESULT_CANCELED) {
-                        Log.d("Update", "Update cancelled");
-                    } else {
-                        Log.d("Update", "Update failed");
                     }
+                } else if (result.getResultCode() == RESULT_CANCELED) {
+                    Log.d("Update", "Update cancelled");
+                } else {
+                    Log.d("Update", "Update failed");
                 }
             });
 
@@ -72,16 +78,12 @@ public class ProductDetail extends AppCompatActivity implements ProductDAO, User
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
         init();
-        // Get product from intent
-        product = getIntent().getParcelableExtra("product");
-        uriArrayList = getImagesListUri();
-        getProduct();
+
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(null);
 
         productDetailAdapter = new ProductDetailAdapter(this, uriArrayList);
-        /*LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        linearLayoutManager.setReverseLayout(false);
-        productImageRv.setLayoutManager(linearLayoutManager);*/
+
         productImageRv.setAdapter(productDetailAdapter);
         productImageRv.setClipToPadding(false);
         productImageRv.setClipChildren(false);
@@ -151,6 +153,14 @@ public class ProductDetail extends AppCompatActivity implements ProductDAO, User
         productDescription = findViewById(R.id.product_description);
         btnBack = findViewById(R.id.tvGoBack);
         loading = findViewById(R.id.img_loading_animation);
+        toolbar = findViewById(R.id.toolbar);
+
+        product = getIntent().getParcelableExtra("product");
+        Log.d("Product", "Product: " + product.getProductID());
+        getProduct();
+        uriArrayList = getImagesListUri();
+        getTempImgList();
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -164,18 +174,8 @@ public class ProductDetail extends AppCompatActivity implements ProductDAO, User
         productName.setText(product.getProductName());
         productPrice.setText("Price: " + product.getProductPrice() + "$");
         productQty.setText("Qty: " + product.getProductQuantity());
-//        productCategory.setText(product.getProductCategory());
         productDescription.setText(product.getProductDes());
-    }
-
-    private void showLoading() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(LayoutInflater.from(this).inflate(
-                R.layout.loading_after_update, null));
-        builder.setCancelable(false);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        new Handler().postDelayed(dialog::dismiss, 3000);
+        productCategory.setText(product.getProductCategoryName());
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -201,5 +201,55 @@ public class ProductDetail extends AppCompatActivity implements ProductDAO, User
             }
         });
         return uriList;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.product_detail_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.detail_menu_edit) {
+            Intent intent = new Intent(this, UpdateProductActivity.class);
+            intent.setAction("update");
+            intent.putExtra("product", product);
+            intent.putExtra("tempImgList", tempImgList);
+            updateProduct.launch(intent);
+        } else if (id == R.id.detail_menu_delete) {
+            deleteProduct();
+            Log.d("Product", "Delete product");
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void getTempImgList() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String formattedDateTime = now.format(formatter);
+        Random random = new Random();
+        int randomNumber = random.nextInt(10000);
+        String randomName = formattedDateTime + "_" + randomNumber;
+
+        StorageReference ref = productImagesRef.child(getUID()).child(String.valueOf(product.getProductID()));
+
+        ref.listAll().addOnSuccessListener(listResult -> {
+            int i = 0;
+            for (StorageReference item : listResult.getItems()) {
+                String fileName = "temp_" + randomName + i + ".jpg";
+                File localFile = new File(getCacheDir(), fileName);
+                item.getFile(localFile).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        tempImgList.add(Uri.fromFile(localFile));
+                        Log.d("Product", "Temp img list: " + tempImgList.size());
+                        Log.d("Product", "Temp img added: " + localFile.toString());
+                    }
+                });
+                i++;
+            }
+        });
     }
 }

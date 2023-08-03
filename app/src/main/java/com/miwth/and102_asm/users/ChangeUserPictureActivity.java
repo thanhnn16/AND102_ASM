@@ -5,6 +5,7 @@ import static com.yalantis.ucrop.UCrop.RESULT_ERROR;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.miwth.and102_asm.MainActivity;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.database.ImageCropperActivity;
@@ -72,7 +74,17 @@ public class ChangeUserPictureActivity extends AppCompatActivity implements User
     }
 
     private void uploadImage(Uri imageUri) {
-        uploadAvatar(imageUri, user);
+        UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(imageUri)
+                .build();
+        user.updateProfile(profileChangeRequest)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("TAG", "User profile updated.");
+                    } else {
+                        Log.d("TAG", "User profile update failed.");
+                    }
+                });
         showSuccessDialog();
     }
 

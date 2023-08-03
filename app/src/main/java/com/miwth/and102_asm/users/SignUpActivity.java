@@ -1,31 +1,34 @@
 package com.miwth.and102_asm.users;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.LayoutInflater;
-import android.widget.Button;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.miwth.and102_asm.R;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class SignUpActivity extends AppCompatActivity implements UserAuth {
     EditText edtDisplayName, edtEmail, edtPassword, edtRePW;
-    Button btnSignUp;
+    LinearLayout btnSignUp;
     CheckBox chkAcceptTerm;
     FirebaseUser user;
     ImageButton tvGoBack;
+    TextView tvLogin, btnText;
+    LottieAnimationView lottieAnimationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +41,18 @@ public class SignUpActivity extends AppCompatActivity implements UserAuth {
         edtRePW = findViewById(R.id.etRePW);
         tvGoBack = findViewById(R.id.tvGoBack);
 
+        btnText = findViewById(R.id.btnText);
+        lottieAnimationView = findViewById(R.id.btnAnimation);
+
+        tvLogin = findViewById(R.id.tvLogin);
+
         btnSignUp = findViewById(R.id.btnSignUp);
+
         chkAcceptTerm = findViewById(R.id.chkAcceptTerm);
 
         btnSignUp.setOnClickListener(v -> setBtnSignUp());
         tvGoBack.setOnClickListener(v -> finish());
+        tvLogin.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, LoginActivity.class).setAction("LOGIN")));
     }
 
     private void setBtnSignUp() {
@@ -50,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity implements UserAuth {
         String email = edtEmail.getText().toString().trim();
         String pw = edtPassword.getText().toString();
         String rePw = edtRePW.getText().toString();
-
+        playButtonAnimation();
 
         if (displayName.isEmpty()) {
             edtDisplayName.requestFocus();
@@ -78,17 +88,21 @@ public class SignUpActivity extends AppCompatActivity implements UserAuth {
             mAuth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     user = task.getResult().getUser();
-                    mAuth.updateCurrentUser(user);
+                    if (user != null) {
+                        mAuth.updateCurrentUser(user);
+                    }
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName(displayName)
                             .build();
                     user.updateProfile(profileUpdates);
+                    startActivity(new Intent(SignUpActivity.this, ChangeUserPictureActivity.class).setAction("UPDATE_PROFILE"));
+                    finish();
                 } else {
-                    Toast.makeText(SignUpActivity.this, "Sign up failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUpActivity.this, "Sign up failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    edtEmail.requestFocus();
+                    edtEmail.setError(Objects.requireNonNull(task.getException()).getMessage());
                 }
             });
-            showLoading();
-            startActivity(new Intent(SignUpActivity.this, ChangeUserPictureActivity.class));
         }
     }
 
@@ -119,22 +133,19 @@ public class SignUpActivity extends AppCompatActivity implements UserAuth {
         } else if (!Pattern.compile("[!@#$%^&*()_+=|<>?{}\\[\\]~-]").matcher(password).find()) {
             edtPassword.setError("Password must contain at least 1 special character");
             return false;
-
-        } else {
-            Toast.makeText(this, "Sign up successfully", Toast.LENGTH_SHORT).show();
         }
         return true;
     }
 
-
-    @SuppressLint("InflateParams")
-    private void showLoading() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(LayoutInflater.from(this).inflate(
-                R.layout.loading_after_update, null));
-        builder.setCancelable(false);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        new Handler().postDelayed(dialog::dismiss, 3000);
+    private void playButtonAnimation() {
+        btnText.setVisibility(View.INVISIBLE);
+        lottieAnimationView.setVisibility(View.VISIBLE);
+        lottieAnimationView.playAnimation();
+        new Handler().postDelayed(() -> {
+            btnText.setVisibility(View.VISIBLE);
+            lottieAnimationView.setVisibility(View.GONE);
+            lottieAnimationView.cancelAnimation();
+        }, 1500);
     }
+
 }

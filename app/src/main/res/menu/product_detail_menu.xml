@@ -4,18 +4,21 @@
     <item
         android:id="@+id/menu_more"
         android:icon="@drawable/baseline_more_vert_24"
-        android:title="MORE"
+        android:iconTint="@color/send_enable"
+        android:title="@string/more"
         app:showAsAction="always">
         <menu>
             <item
-                android:id="@+id/menu_welcome"
+                android:id="@+id/detail_menu_edit"
                 android:icon="@drawable/baseline_edit_24"
-                android:title="Edit Product"
+                android:iconTint="@color/send_enable"
+                android:title="@string/update_product"
                 app:showAsAction="ifRoom" />
             <item
-                android:id="@+id/menu_logout"
+                android:id="@+id/detail_menu_delete"
                 android:icon="@drawable/baseline_logout_24"
-                android:title="Delete Product"
+                android:iconTint="@color/send_enable"
+                android:title="@string/delete_product"
                 app:showAsAction="ifRoom" />
         </menu>
     </item>

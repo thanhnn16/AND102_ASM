@@ -4,57 +4,52 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.miwth.and102_asm.MainActivity;
 import com.miwth.and102_asm.R;
-import com.miwth.and102_asm.welcome.LoginSignupScreen;
 
 public class CheckStateActivity extends AppCompatActivity implements UserAuth {
-    final int SPLASH_SCREEN_TIME = 2100;
+    final int SPLASH_SCREEN_TIME = 800;
     SharedPreferences sharedPreferences;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_state);
-
+        user = mAuth.getCurrentUser();
         sharedPreferences = getSharedPreferences("login_state", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
         new Handler().postDelayed(() -> {
-            if (isUserLoggedIn()) {
-                if (getUserEmail() != null) {
-                    if (isLoggedIn) {
-                        startMainActivity();
-                    } else {
-                        logout();
-                        startLoginActivity();
-                    }
-                } else if (getUserEmail() == null) {
+            if (user != null || isLoggedIn) {
+                if (getDisplayName() == null && getUserEmail() == null) {
                     startSignUpActivity();
                     Toast.makeText(this, "Please complete your profile", Toast.LENGTH_SHORT).show();
+                } else {
+                    startMainActivity();
                 }
             } else {
-                startLoginActivity();
+                Log.d("TAG", "checkLogin: " + null);
+                logout();
+                startSignUpActivity();
             }
+
         }, SPLASH_SCREEN_TIME);
     }
 
     private void startMainActivity() {
-        startActivity(new Intent(CheckStateActivity.this, MainActivity.class));
+        startActivity(new Intent(CheckStateActivity.this, MainActivity.class).setAction("START_MAIN_ACTIVITY"));
         Toast.makeText(CheckStateActivity.this, "Welcome back\n" + getDisplayName(), Toast.LENGTH_SHORT).show();
         finishAffinity();
     }
 
-    private void startLoginActivity() {
-        startActivity(new Intent(CheckStateActivity.this, LoginSignupScreen.class));
-        finishAffinity();
-    }
-
     private void startSignUpActivity() {
-        startActivity(new Intent(CheckStateActivity.this, SignUpActivity.class));
+        startActivity(new Intent(CheckStateActivity.this, SignUpActivity.class).setAction("START_SIGN_UP_ACTIVITY"));
         finishAffinity();
     }
 }

@@ -7,6 +7,15 @@
     android:background="@color/white"
     tools:context=".fragment.ProductHomeFragment">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationViewLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:elevation="99dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading_potato" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -147,16 +156,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationViewLoading"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/loading_potato" />
 
-            <TextView
+        <TextView
                 android:id="@+id/tvNoProductFound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

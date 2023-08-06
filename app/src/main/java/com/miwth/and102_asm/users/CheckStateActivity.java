@@ -20,6 +20,7 @@ import java.io.File;
 
 public class CheckStateActivity extends AppCompatActivity implements UserAuth {
     final int SPLASH_SCREEN_TIME = 1000;
+    final int CACHE_SIZE = 150000000;
     SharedPreferences sharedPreferences;
     FirebaseUser user;
 
@@ -31,16 +32,23 @@ public class CheckStateActivity extends AppCompatActivity implements UserAuth {
         sharedPreferences = getSharedPreferences("login_state", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
 
-//        check if getCacheDir() > 100MB then delete
-        if (getCacheDir().getTotalSpace() > 100000000) {
+        long usedCacheSize = getCacheDir().getTotalSpace() - getCacheDir().getFreeSpace();
+        Log.d("TAG", "onCreate: " + usedCacheSize);
+        if (usedCacheSize > CACHE_SIZE) {
             try {
-                // get all files in the cache directory
                 File[] files = getCacheDir().listFiles();
                 if (files == null) {
                     return;
                 }
                 for (File file : files) {
-                    file.delete();
+                    boolean success = file.delete();
+                    if (!success) {
+                        // handle failure
+                        e("TAG", "delete files: failed");
+                    } else {
+                        // handle success
+                        e("TAG", "delete files: success");
+                    }
                 }
             } catch (Exception e) {
                 // handle exception

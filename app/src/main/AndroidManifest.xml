@@ -26,6 +26,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".users.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".database.UpdateProductActivity"
             android:exported="false" />
         <activity
@@ -35,7 +38,6 @@
             android:name=".users.SignUpActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustUnspecified" />
-
         <activity
             android:name=".database.ProductDetail"
             android:exported="false" />

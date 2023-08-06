@@ -139,7 +139,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     @SuppressLint("NotifyDataSetChanged")
     public void filterList(ArrayList<Product> products) {
-        filteredList = products;
+        filteredList = new ArrayList<>();
+        filteredList.addAll(products);
         notifyDataSetChanged();
     }
 

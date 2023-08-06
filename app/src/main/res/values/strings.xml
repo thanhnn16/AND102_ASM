@@ -90,4 +90,9 @@
     <string name="all_products">All Products</string>
     <string name="enter_your_email_to_continue">Enter your email to continue</string>
     <string name="forgot_password">Forgot password?</string>
+    <string name="clear_cache">Clear cache</string>
+    <string name="old_password">Old password</string>
+    <string name="new_password">New password</string>
+    <string name="click_large_image_to_upload_image">Click large image to upload image</string>
+    <string name="you_can_t_change_your_password_if_you_login_with_google_account_or_otp">You can\'t change your password if you login with Google account or OTP</string>
 </resources>

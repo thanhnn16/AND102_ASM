@@ -2,6 +2,7 @@ package com.miwth.and102_asm.fragment;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
+import static android.util.Log.e;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -27,14 +29,17 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseUser;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.database.ProductDAO;
+import com.miwth.and102_asm.users.ChangePasswordActivity;
 import com.miwth.and102_asm.users.SignUpActivity;
 import com.miwth.and102_asm.users.UpdateAccountInfo;
 import com.miwth.and102_asm.users.UserAuth;
 
+import java.io.File;
+
 public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    RelativeLayout btnProfileDetail, btnEditProfile, btnChangePassword, btnLogout, btnExit;
+    RelativeLayout btnProfileDetail, btnEditProfile, btnChangePassword, clearCache, btnLogout, btnExit;
     FirebaseUser user;
 
     ActivityResultLauncher<Intent> updateInfo = registerForActivityResult(
@@ -68,6 +73,40 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
         btnChangePassword = view.findViewById(R.id.changePassword);
         btnLogout = view.findViewById(R.id.logout);
         btnExit = view.findViewById(R.id.exitApp);
+        clearCache = view.findViewById(R.id.clearCache);
+        clearCache.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            builder.setTitle("Clear Cache");
+            builder.setIcon(R.drawable.clear_cache);
+            builder.setMessage("Are you sure you want to clear cache?");
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                try {
+                    // get all files in the cache directory
+                    File[] files = requireActivity().getCacheDir().listFiles();
+                    if (files == null) {
+                        return;
+                    }
+                    for (File file : files) {
+                        boolean success = file.delete();
+                        if (success) {
+                            // handle success
+                            e("TAG", "delete files: success");
+                        } else {
+                            // handle failure
+                            e("TAG", "delete files: failed");
+                        }
+                    }
+                    Toast.makeText(requireActivity(), "Cache cleared", Toast.LENGTH_SHORT).show();
+
+                } catch (Exception e) {
+                    // handle exception
+                    e("TAG", "try delete files: ", e);
+                }
+            });
+            builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        });
 
         user = mAuth.getCurrentUser();
         if (user != null) {
@@ -92,6 +131,7 @@ public class AccountFragment extends Fragment implements UserAuth, ProductDAO {
             }
         }
 
+        btnChangePassword.setOnClickListener(v -> startActivity(new Intent(requireActivity(), ChangePasswordActivity.class).setAction("CHANGE_PASSWORD")));
         btnProfileDetail.setOnClickListener(v -> DialogUpdateProfile());
 
         btnEditProfile.setOnClickListener(v -> updateInfo.launch(new Intent(requireActivity(), UpdateAccountInfo.class)));

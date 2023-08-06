@@ -57,30 +57,27 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
     SearchView searchView;
     CategoriesHomeFragmentAdapter categoriesHomeFragmentAdapter;
     LinearLayout llCategories;
-    ActivityResultLauncher<Intent> recognizeSpeech = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            List<String> results = data.getStringArrayListExtra(
-                                    RecognizerIntent.EXTRA_RESULTS);
-                            if (results != null) {
-                                String spokenText = results.get(0);
-                                Log.i("spokenText", "Spoken text: " + spokenText);
-                                searchView.setQuery(spokenText, true);
+    ActivityResultLauncher<Intent> recognizeSpeech = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == RESULT_OK) {
+                Intent data = result.getData();
+                if (data != null) {
+                    List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (results != null) {
+                        String spokenText = results.get(0);
+                        Log.i("spokenText", "Spoken text: " + spokenText);
+                        searchView.setQuery(spokenText, true);
 
-                            }
-                        }
                     }
                 }
-            });
+            }
+        }
+    });
 
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         productArrayList = new ArrayList<>();
         mDatabase.child(getUID()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -168,10 +165,7 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
         mDatabase.child(getUID()).addValueEventListener(productsValueEventListener);
 
         swipeRefreshLayout.setOnRefreshListener(() -> new Handler().postDelayed(() -> {
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new ProductHomeFragment())
-                    .commit();
+            requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProductHomeFragment()).commit();
             swipeRefreshLayout.setRefreshing(false);
             productAdapter.notifyDataSetChanged();
         }, 600));
@@ -183,10 +177,7 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
 //            bottomNavigationView.setSelectedItemId(R.id.category_menu);
             bottomNavigationView.setItemActiveIndex(1);
             bottomNavigationView.setSelected(true);
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new CategoryFragment())
-                    .commit();
+            requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CategoryFragment()).commit();
         });
 
         tvAllProducts.setOnClickListener(new View.OnClickListener() {
@@ -209,8 +200,7 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
 
     private void displaySpeechRecognizer() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         recognizeSpeech.launch(intent);
     }
 
@@ -225,12 +215,16 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
         return filteredList;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void changeCategory(int categoryID) {
         Log.i("categoryID", "changeCategory position: " + categoryID);
+
         if (categoryID == 99) {
             tvAllProducts.setText("All Products");
             productAdapter.filterList(productArrayList);
+            tvNoProductFound.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
         } else {
             ArrayList<Product> filteredList = filterByCategory(categoryID);
             tvAllProducts.setText(categoryArrayList.get(categoryID).getCategoryName());
@@ -243,6 +237,5 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
                 productAdapter.filterList(filteredList);
             }
         }
-
     }
 }

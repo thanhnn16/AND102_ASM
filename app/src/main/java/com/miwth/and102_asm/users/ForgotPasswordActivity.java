@@ -50,20 +50,16 @@ public class ForgotPasswordActivity extends AppCompatActivity implements UserAut
             if (email.isEmpty()) {
                 edtEmail.setError("Email is required!");
                 edtEmail.requestFocus();
-            } else if (!email.contains("@")) {
-                edtEmail.setError("Invalid email!");
-                edtEmail.requestFocus();
             } else {
                 tvWelcome2.setText("If your email is registered, you will receive an Email to reset your password.");
-                mAuth.sendPasswordResetEmail(email)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Log.d("email", "Email sent.");
-                            } else {
-                                Log.d("email", "Email not sent.");
-                                Log.d("email", "Msg: " + Objects.requireNonNull(task.getException()).getMessage());
-                            }
-                        });
+                mAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("email", "Email sent.");
+                    } else {
+                        Log.d("email", "Email not sent.");
+                        Log.d("email", "Msg: " + Objects.requireNonNull(task.getException()).getMessage());
+                    }
+                });
             }
         });
         btnBack.setOnClickListener(v -> onBackPressed());

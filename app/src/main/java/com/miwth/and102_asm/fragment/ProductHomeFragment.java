@@ -229,9 +229,11 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
     public void changeCategory(int categoryID) {
         Log.i("categoryID", "changeCategory position: " + categoryID);
         if (categoryID == 99) {
+            tvAllProducts.setText("All Products");
             productAdapter.filterList(productArrayList);
         } else {
             ArrayList<Product> filteredList = filterByCategory(categoryID);
+            tvAllProducts.setText(categoryArrayList.get(categoryID).getCategoryName());
             if (filteredList.size() == 0) {
                 tvNoProductFound.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);

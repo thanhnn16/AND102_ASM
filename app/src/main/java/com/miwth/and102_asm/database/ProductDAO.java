@@ -7,15 +7,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.miwth.and102_asm.model.Product;
 
 import java.io.ByteArrayOutputStream;
@@ -75,13 +70,7 @@ public interface ProductDAO {
                         productImagesRef.child(uID)
                                 .child(String.valueOf(productID))
                                 .child("default")
-                                .putFile(Uri.fromFile(outputFile)).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                        latch.countDown();
-
-                                    }
-                                });
+                                .putFile(Uri.fromFile(outputFile)).addOnCompleteListener(task -> latch.countDown());
                     } else {
                         LocalDateTime now = LocalDateTime.now();
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss");
@@ -89,31 +78,18 @@ public interface ProductDAO {
                         Log.i("fileName", fileName);
                         productImagesRef.child(uID)
                                 .child(String.valueOf(productID))
-                                .child(fileName).putFile(Uri.fromFile(outputFile)).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                        latch.countDown();
-                                    }
-                                });
+                                .child(fileName).putFile(Uri.fromFile(outputFile)).addOnCompleteListener(task -> latch.countDown());
                     }
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                // Wait until all images are uploaded (latch count reaches 0) or timeout occurs
-                                latch.await();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                            // All images have been uploaded, hide the progress bar and call the callback
-                            ((Activity) context).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callBack.onUploadComplete();
-                                }
-                            });
+                    new Thread(() -> {
+                        try {
+                            // Wait until all images are uploaded (latch count reaches 0) or timeout occurs
+                            latch.await();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
+
+                        // All images have been uploaded, hide the progress bar and call the callback
+                        ((Activity) context).runOnUiThread(callBack::onUploadComplete);
                     }).start();
                 }
             } catch (FileNotFoundException e) {

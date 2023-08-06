@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.adapter.ImageListAdapter;
 import com.miwth.and102_asm.fragment.ProductHomeFragment;
+import com.miwth.and102_asm.model.LoadingDialog;
 import com.miwth.and102_asm.model.Product;
 import com.miwth.and102_asm.users.UserAuth;
 
@@ -87,6 +88,7 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
+        LoadingDialog loadingDialog = new LoadingDialog(AddProductActivity.this);
 
         edtProductID = findViewById(R.id.etProductId);
         edtProductName = findViewById(R.id.etProductName);
@@ -181,17 +183,20 @@ public class AddProductActivity extends AppCompatActivity implements ProductDAO,
                     public void onUploadComplete() {
                         Log.i("ProductManagement", "onUploadComplete: ");
                         Toast.makeText(AddProductActivity.this, "Upload complete", Toast.LENGTH_SHORT).show();
+                        loadingDialog.cancel();
                         finish();
                     }
 
                     @Override
                     public void onUploadError(Throwable throwable) {
                         Toast.makeText(AddProductActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        loadingDialog.cancel();
                         Log.e("ProductManagement", "onUploadError: ", throwable);
                     }
                 };
                 intent.putExtra("product", product);
                 intent.putExtra("uri_list", imageList);
+                loadingDialog.show();
                 insert(product, getUID());
                 uploadProductImg(imageList, getUID(), product.getProductID(), this, uploadCallBack);
                 Log.i("ProductManagement", "onActivityResult: uploading");

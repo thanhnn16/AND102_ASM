@@ -1,5 +1,7 @@
 package com.miwth.and102_asm.users;
 
+import static android.util.Log.e;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,9 +14,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseUser;
 import com.miwth.and102_asm.MainActivity;
 import com.miwth.and102_asm.R;
+import com.miwth.and102_asm.welcome.OnboardingActivity;
+
+import java.io.File;
 
 public class CheckStateActivity extends AppCompatActivity implements UserAuth {
-    final int SPLASH_SCREEN_TIME = 800;
+    final int SPLASH_SCREEN_TIME = 1000;
     SharedPreferences sharedPreferences;
     FirebaseUser user;
 
@@ -25,6 +30,24 @@ public class CheckStateActivity extends AppCompatActivity implements UserAuth {
         user = mAuth.getCurrentUser();
         sharedPreferences = getSharedPreferences("login_state", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
+
+//        check if getCacheDir() > 100MB then delete
+        if (getCacheDir().getTotalSpace() > 100000000) {
+            try {
+                // get all files in the cache directory
+                File[] files = getCacheDir().listFiles();
+                if (files == null) {
+                    return;
+                }
+                for (File file : files) {
+                    file.delete();
+                }
+            } catch (Exception e) {
+                // handle exception
+                e("TAG", "try delete files: ", e);
+            }
+        }
+
         new Handler().postDelayed(() -> {
             if (user != null || isLoggedIn) {
                 if (getDisplayName() == null && getUserEmail() == null) {
@@ -49,7 +72,7 @@ public class CheckStateActivity extends AppCompatActivity implements UserAuth {
     }
 
     private void startSignUpActivity() {
-        startActivity(new Intent(CheckStateActivity.this, SignUpActivity.class).setAction("START_SIGN_UP_ACTIVITY"));
+        startActivity(new Intent(CheckStateActivity.this, OnboardingActivity.class).setAction("START_SIGN_UP_ACTIVITY"));
         finishAffinity();
     }
 }

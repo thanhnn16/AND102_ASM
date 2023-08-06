@@ -58,12 +58,10 @@ public class ProductCategory {
     }
 
     public int getCategoryQuantity() {
-        return 999;
+        return categoryQuantity;
     }
 
     public void setCategoryQuantity(int categoryQuantity) {
         this.categoryQuantity = categoryQuantity;
     }
-
-
 }

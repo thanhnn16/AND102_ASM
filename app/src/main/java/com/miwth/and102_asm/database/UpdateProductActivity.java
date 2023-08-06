@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.miwth.and102_asm.R;
 import com.miwth.and102_asm.adapter.ImageListAdapter;
+import com.miwth.and102_asm.model.LoadingDialog;
 import com.miwth.and102_asm.model.Product;
 import com.miwth.and102_asm.users.UserAuth;
 
@@ -39,7 +40,6 @@ public class UpdateProductActivity extends AppCompatActivity implements ProductD
     Button btnUpdate;
     TextInputEditText etID, etName, etPrice, etQuantity, etCategory, etDes;
     TextView tvUploadImage;
-    Uri stockImgUrl;
     ArrayList<Product> productArrayList;
     Product currentProduct;
     ArrayList<Uri> imageList;
@@ -47,6 +47,7 @@ public class UpdateProductActivity extends AppCompatActivity implements ProductD
     RecyclerView imgList_rv;
     FirebaseUser user;
     int selectedCategory = 0;
+    LoadingDialog loadingDialog;
 
     ActivityResultLauncher<Intent> mGetMultiImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -85,6 +86,7 @@ public class UpdateProductActivity extends AppCompatActivity implements ProductD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_product);
+        loadingDialog = new LoadingDialog(this);
         btn_back = findViewById(R.id.btn_back);
         imgProduct = findViewById(R.id.ivProductImg);
         btnUpdate = findViewById(R.id.btnUpdate);
@@ -205,15 +207,18 @@ public class UpdateProductActivity extends AppCompatActivity implements ProductD
                     intent.putExtra("updatedProduct", product);
                     intent.putExtra("updatedImgList", imageList);
                     setResult(RESULT_OK, intent);
+                    loadingDialog.cancel();
                     finish();
                 }
 
                 @Override
                 public void onUploadError(Throwable throwable) {
                     Toast.makeText(UpdateProductActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    loadingDialog.cancel();
                     Log.e("ProductManagement", "onUploadError: ", throwable);
                 }
             };
+            loadingDialog.show();
             delete(String.valueOf(currentProduct.getProductID()), getUID());
             insert(product, getUID());
             uploadProductImg(imageList, getUID(), product.getProductID(), this, uploadCallBack);

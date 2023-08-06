@@ -172,7 +172,7 @@ public class ProductDetail extends AppCompatActivity implements ProductDAO, User
         }
         Log.d("Product", "Got product");
         productName.setText(product.getProductName());
-        productPrice.setText("Price: " + product.getProductPrice() + "$");
+        productPrice.setText(product.getProductPrice() + "$");
         productQty.setText("Qty: " + product.getProductQuantity());
         productDescription.setText(product.getProductDes());
         productCategory.setText(product.getProductCategoryName());

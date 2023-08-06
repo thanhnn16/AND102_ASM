@@ -25,7 +25,7 @@
         android:layout_marginHorizontal="64dp"
         android:layout_marginBottom="8dp"
         android:importantForAccessibility="no"
-        android:src="@drawable/logo" />
+        android:src="@drawable/fpt_polytechnic" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

@@ -20,10 +20,12 @@ import java.util.ArrayList;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     Context context;
     ArrayList<ProductCategory> categoryArrayList;
+    SelectCategoryCallback selectCategoryCallback;
 
-    public CategoryAdapter(FragmentActivity fragmentActivity, ArrayList<ProductCategory> categoryArrayList) {
+    public CategoryAdapter(FragmentActivity fragmentActivity, ArrayList<ProductCategory> categoryArrayList, SelectCategoryCallback selectCategoryCallback) {
         this.context = fragmentActivity;
         this.categoryArrayList = categoryArrayList;
+        this.selectCategoryCallback = selectCategoryCallback;
     }
 
     @NonNull
@@ -40,11 +42,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         holder.categoryName.setText(categoryArrayList.get(position).getCategoryName());
         String quantity = categoryArrayList.get(position).getCategoryQuantity() + " items";
         holder.categoryQuantity.setText(quantity);
+
+        holder.categoryLayout.setOnClickListener(v -> selectCategoryCallback.selectCategory(categoryArrayList.get(holder.getAbsoluteAdapterPosition()).getCategoryID()));
     }
 
     @Override
     public int getItemCount() {
         return categoryArrayList.size();
+    }
+
+    public interface SelectCategoryCallback {
+        void selectCategory(int categoryID);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

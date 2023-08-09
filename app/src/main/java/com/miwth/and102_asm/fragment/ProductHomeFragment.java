@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -50,7 +49,6 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
     ProductAdapter productAdapter;
     ArrayList<Product> productArrayList;
     ArrayList<ProductCategory> categoryArrayList;
-    LottieAnimationView lottieAnimationView;
     SwipeRefreshLayout swipeRefreshLayout;
     TextView tvHello, tvNoProductFound, tvAllProducts;
     ImageButton voice_search;
@@ -79,26 +77,14 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         productArrayList = new ArrayList<>();
-        mDatabase.child(getUID()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DataSnapshot snapshot = task.getResult();
-                productArrayList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Product product = dataSnapshot.getValue(Product.class);
-                    productArrayList.add(product);
-                    stopAnimation();
-                }
-                productAdapter.notifyDataSetChanged();
-            } else {
-                Log.e("ProductManagement", "Error getting data", task.getException());
-            }
-        });
-
         View view = inflater.inflate(R.layout.fragment_product_home, container, false);
+        tvNoProductFound = view.findViewById(R.id.tvNoProductFound);
+
+        getDataFromFirebase();
+
         recyclerView = view.findViewById(R.id.recyclerViewProductManagement);
         tvHello = view.findViewById(R.id.tvHello);
         tvHello.setText(getString(R.string.hello) + getDisplayName());
-        tvNoProductFound = view.findViewById(R.id.tvNoProductFound);
 
         tvAllProducts = view.findViewById(R.id.tvAllProducts);
 
@@ -108,7 +94,6 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
         recyclerView.setLayoutManager(gridLayoutManager);
         productAdapter = new ProductAdapter(getContext(), productArrayList);
         recyclerView.setAdapter(productAdapter);
-        lottieAnimationView = view.findViewById(R.id.animationViewLoading);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayoutProductManagement);
 
         recyclerViewCategories = view.findViewById(R.id.recyclerViewCategories);
@@ -128,6 +113,21 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerViewCategories.setLayoutManager(linearLayoutManager);
         recyclerViewCategories.setAdapter(categoriesHomeFragmentAdapter);
+
+        Log.i("categoryID", "before call bundle, productArrayList size: " + productArrayList.size());
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            int id = bundle.getInt("categoryID", 99);
+            productArrayList = bundle.getParcelableArrayList("productArrayList");
+            productAdapter.notifyDataSetChanged();
+            Log.i("categoryID", "bundle is not null, categoryID: " + id);
+            Log.i("categoryID", "bundle is not null, productArrayList size: " + productArrayList.size());
+            categoriesHomeFragmentAdapter.setSelectionByCategoryID(id);
+            recyclerViewCategories.scrollToPosition(id - 1);
+            changeCategory(id);
+        } else {
+            Log.d("bundle", "onCreateView: bundle is null");
+        }
 
         voice_search = view.findViewById(R.id.voice_search);
         voice_search.setOnClickListener(v -> displaySpeechRecognizer());
@@ -180,22 +180,37 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
             requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CategoryFragment()).commit();
         });
 
-        tvAllProducts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                productAdapter.filterList(productArrayList);
-            }
-        });
+        tvAllProducts.setOnClickListener(v -> productAdapter.filterList(productArrayList));
 
 
         return view;
     }
 
+    @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
+    private void getDataFromFirebase() {
+        tvNoProductFound.setText("Loading...");
+        mDatabase.child(getUID()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot snapshot = task.getResult();
+                productArrayList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Product product = dataSnapshot.getValue(Product.class);
+                    productArrayList.add(product);
+                }
+                if (productArrayList.size() == 0) {
+                    tvNoProductFound.setText("No Product Found");
+                }
+                stopAnimation();
+                productAdapter.notifyDataSetChanged();
+            } else {
+                Log.e("ProductManagement", "Error getting data", task.getException());
+            }
+        });
+    }
+
     public void stopAnimation() {
-        lottieAnimationView.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
-        lottieAnimationView.cancelAnimation();
         tvNoProductFound.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     private void displaySpeechRecognizer() {
@@ -206,12 +221,17 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
 
     private ArrayList<Product> filterByCategory(int categoryID) {
         ArrayList<Product> filteredList = new ArrayList<>();
+        Log.d("categoryID", "new filterList: " + filteredList.size());
+        Log.d("categoryID", "start filterByCategory: " + categoryID);
+        Log.i("categoryID", "productArraylist size: " + productArrayList.size());
         for (Product product : productArrayList) {
+            Log.i("categoryID", "Loop: " + product.getProductCategoryId());
             if (product.getProductCategoryId() == categoryID) {
                 Log.d("categoryID", "filterByCategory: " + product.getProductCategoryId());
                 filteredList.add(product);
             }
         }
+        Log.i("categoryID", "filterByCategory, done: " + filteredList.size());
         return filteredList;
     }
 
@@ -219,8 +239,9 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
     @Override
     public void changeCategory(int categoryID) {
         Log.i("categoryID", "changeCategory position: " + categoryID);
-
+        tvNoProductFound.setText("No Product Found");
         if (categoryID == 99) {
+            Log.i("categoryID", "changeCategory all product: " + categoryID);
             tvAllProducts.setText("All Products");
             productAdapter.filterList(productArrayList);
             tvNoProductFound.setVisibility(View.GONE);
@@ -229,9 +250,11 @@ public class ProductHomeFragment extends Fragment implements ProductDAO, UserAut
             ArrayList<Product> filteredList = filterByCategory(categoryID);
             tvAllProducts.setText(categoryArrayList.get(categoryID).getCategoryName());
             if (filteredList.size() == 0) {
+                Log.i("categoryID", "changeCategory no product found: " + categoryID);
                 tvNoProductFound.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
             } else {
+                Log.i("categoryID", "changeCategory product found: " + filteredList.size());
                 tvNoProductFound.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 productAdapter.filterList(filteredList);

@@ -141,6 +141,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public void filterList(ArrayList<Product> products) {
         filteredList = new ArrayList<>();
         filteredList.addAll(products);
+        Log.i("ProductAdapter", "filterList: " + filteredList.size());
         notifyDataSetChanged();
     }
 

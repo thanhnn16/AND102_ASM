@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -114,5 +115,22 @@ public interface ProductDAO {
 
     default StorageReference getDefaultProductImagesRef(String uid, String id) {
         return productImagesRef.child(uid).child(id).child("default");
+    }
+
+    default ArrayList<Product> getDataFromFirebase(String uid) {
+        ArrayList<Product> productArrayList = new ArrayList<>();
+        mDatabase.child((uid)).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot snapshot = task.getResult();
+                productArrayList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Product product = dataSnapshot.getValue(Product.class);
+                    productArrayList.add(product);
+                }
+            } else {
+                Log.e("ProductManagement", "Error getting data", task.getException());
+            }
+        });
+        return productArrayList;
     }
 }

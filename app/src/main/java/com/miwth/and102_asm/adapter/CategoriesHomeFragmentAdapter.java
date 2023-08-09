@@ -68,6 +68,14 @@ public class CategoriesHomeFragmentAdapter extends RecyclerView.Adapter<Categori
         return categoryArrayList.size();
     }
 
+    public void setSelectionByCategoryID(int categoryID) {
+        for (ProductCategory c : categoryArrayList) {
+            c.setSelected(false);
+        }
+        categoryArrayList.get(categoryID).setSelected(true);
+        notifyDataSetChanged();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView categoryImage;
         RelativeLayout categoryLayout;

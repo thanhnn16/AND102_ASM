@@ -26,10 +26,13 @@ import com.miwth.and102_asm.users.UserAuth;
 
 import java.util.ArrayList;
 
+import me.ibrahimsn.lib.SmoothBottomBar;
+
 public class CategoryFragment extends Fragment implements ProductDAO, UserAuth {
     SwipeRefreshLayout swipeRefreshLayout;
     CategoryAdapter categoryAdapter;
     ArrayList<ProductCategory> categoryArrayList;
+    ArrayList<Product> productArrayList;
     RecyclerView recyclerView;
 
     @SuppressLint({"SetJavaScriptEnabled", "NotifyDataSetChanged"})
@@ -49,7 +52,22 @@ public class CategoryFragment extends Fragment implements ProductDAO, UserAuth {
         categoryArrayList.add(new ProductCategory(7, "Oats", R.drawable.category_oats));
         categoryArrayList.add(new ProductCategory(8, "Rice", R.drawable.category_rice));
         getItemQuantity();
-        categoryAdapter = new CategoryAdapter(requireActivity(), categoryArrayList);
+
+        productArrayList = getDataFromFirebase(getUID());
+        categoryAdapter = new CategoryAdapter(requireActivity(), categoryArrayList, categoryID -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("categoryID", categoryID);
+            bundle.putParcelableArrayList("productArrayList", productArrayList);
+            ProductHomeFragment productHomeFragment = new ProductHomeFragment();
+            productHomeFragment.setArguments(bundle);
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, productHomeFragment)
+                    .addToBackStack(null).commit();
+            SmoothBottomBar smoothBottomBar = requireActivity().findViewById(R.id.bottom_navigation);
+            smoothBottomBar.setItemActiveIndex(0);
+
+        });
         productCatalogRef.setValue(categoryArrayList);
         recyclerView = view.findViewById(R.id.rv_category);
 
